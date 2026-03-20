@@ -107,14 +107,11 @@ export class AttemptService {
 /** Check if selectedKeys match the correct answer exactly */
 function checkAnswer(question: QuizQuestion, selectedKeys: string[]): boolean {
   const correctAnswer = question.correctAnswer;
-
-  // Normalize correct answer to sorted array
   const correctKeys = Array.isArray(correctAnswer)
-    ? [...(correctAnswer as string[])].sort()
+    ? (correctAnswer as string[])
     : [correctAnswer as string];
 
-  const sortedSelected = [...selectedKeys].sort();
-
-  if (correctKeys.length !== sortedSelected.length) return false;
-  return correctKeys.every((key, i) => key === sortedSelected[i]);
+  if (correctKeys.length !== selectedKeys.length) return false;
+  const correctSet = new Set(correctKeys);
+  return selectedKeys.every((key) => correctSet.has(key));
 }

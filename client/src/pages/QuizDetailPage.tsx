@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuiz, useDeleteQuiz } from "../api/quizzes";
+import { ConfirmDialog } from "../components/ui/ConfirmDialog";
 import { useState } from "react";
 
 export function QuizDetailPage() {
@@ -81,34 +82,16 @@ export function QuizDetailPage() {
         </div>
       </div>
 
-      {/* Delete confirmation */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Delete Quiz
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Are you sure you want to delete &ldquo;{quiz.title}&rdquo;? This
-              action cannot be undone.
-            </p>
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleteQuiz.isPending}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-              >
-                {deleteQuiz.isPending ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="Delete Quiz"
+          message={`Are you sure you want to delete "${quiz.title}"? This action cannot be undone.`}
+          confirmLabel="Delete"
+          isDestructive
+          isPending={deleteQuiz.isPending}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
       )}
 
       {/* Questions preview */}

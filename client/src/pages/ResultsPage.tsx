@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAttempts } from "../api/attempts";
+import { getScoreColor } from "../lib/utils";
 
 export function ResultsPage() {
   const { data, isLoading, error } = useAttempts();
@@ -30,15 +31,7 @@ export function ResultsPage() {
 
       {data && data.attempts.length > 0 && (
         <div className="space-y-3">
-          {data.attempts.map((attempt) => {
-            const pctColor =
-              attempt.percentage >= 80
-                ? "text-green-600"
-                : attempt.percentage >= 50
-                  ? "text-amber-600"
-                  : "text-red-600";
-
-            return (
+          {data.attempts.map((attempt) => (
               <Link
                 key={attempt.id}
                 to={`/results/${attempt.id}`}
@@ -54,7 +47,7 @@ export function ResultsPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-xl font-bold ${pctColor}`}>
+                    <p className={`text-xl font-bold ${getScoreColor(attempt.percentage)}`}>
                       {attempt.percentage.toFixed(0)}%
                     </p>
                     <p className="text-sm text-gray-500">
@@ -63,8 +56,7 @@ export function ResultsPage() {
                   </div>
                 </div>
               </Link>
-            );
-          })}
+          ))}
         </div>
       )}
     </div>

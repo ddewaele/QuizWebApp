@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { QuizQuestion } from "../../types";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 
 interface QuizPlayerProps {
   questions: QuizQuestion[];
@@ -170,34 +171,16 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
         </p>
       )}
 
-      {/* Submit confirmation */}
       {showConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Submit Quiz?
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              You have answered {totalAnswered} of {questions.length} questions.
-              This action cannot be undone.
-            </p>
-            <div className="flex gap-2 justify-end">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50"
-              >
-                Review Answers
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50"
-              >
-                {isSubmitting ? "Submitting..." : "Confirm Submit"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="Submit Quiz?"
+          message={`You have answered ${totalAnswered} of ${questions.length} questions. This action cannot be undone.`}
+          confirmLabel="Confirm Submit"
+          cancelLabel="Review Answers"
+          isPending={isSubmitting}
+          onConfirm={handleSubmit}
+          onCancel={() => setShowConfirm(false)}
+        />
       )}
     </div>
   );

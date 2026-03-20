@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuizzes } from "../api/quizzes";
 import { useAttempts } from "../api/attempts";
 import { useAuth } from "../hooks/useAuth";
+import { getScoreColor } from "../lib/utils";
 
 export function DashboardPage() {
   const { user } = useAuth();
@@ -12,10 +14,13 @@ export function DashboardPage() {
   const attempts = attemptData?.attempts ?? [];
   const recentAttempts = attempts.slice(0, 5);
 
-  const avgScore =
-    attempts.length > 0
-      ? attempts.reduce((sum, a) => sum + a.percentage, 0) / attempts.length
-      : null;
+  const avgScore = useMemo(
+    () =>
+      attempts.length > 0
+        ? attempts.reduce((sum, a) => sum + a.percentage, 0) / attempts.length
+        : null,
+    [attempts],
+  );
 
   return (
     <div>
@@ -124,15 +129,7 @@ export function DashboardPage() {
             </p>
           ) : (
             <div className="space-y-2">
-              {recentAttempts.map((attempt) => {
-                const pctColor =
-                  attempt.percentage >= 80
-                    ? "text-green-600"
-                    : attempt.percentage >= 50
-                      ? "text-amber-600"
-                      : "text-red-600";
-
-                return (
+              {recentAttempts.map((attempt) => (
                   <Link
                     key={attempt.id}
                     to={`/results/${attempt.id}`}
@@ -146,12 +143,11 @@ export function DashboardPage() {
                         {new Date(attempt.completedAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className={`text-lg font-bold ${pctColor}`}>
+                    <span className={`text-lg font-bold ${getScoreColor(attempt.percentage)}`}>
                       {attempt.percentage.toFixed(0)}%
                     </span>
                   </Link>
-                );
-              })}
+              ))}
             </div>
           )}
         </div>
