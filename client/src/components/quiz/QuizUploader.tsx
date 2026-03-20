@@ -1,12 +1,18 @@
 import { useState, useRef } from "react";
 
+export interface ValidationErrorDetail {
+  path: string;
+  message: string;
+}
+
 interface QuizUploaderProps {
   onUpload: (title: string, content: string) => void;
   isUploading: boolean;
   error?: string | null;
+  validationErrors?: ValidationErrorDetail[];
 }
 
-export function QuizUploader({ onUpload, isUploading, error }: QuizUploaderProps) {
+export function QuizUploader({ onUpload, isUploading, error, validationErrors }: QuizUploaderProps) {
   const [title, setTitle] = useState("");
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -65,7 +71,19 @@ export function QuizUploader({ onUpload, isUploading, error }: QuizUploaderProps
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {error}
+          <p className="font-medium">{error}</p>
+          {validationErrors && validationErrors.length > 0 && (
+            <ul className="mt-2 space-y-1 list-disc list-inside">
+              {validationErrors.map((e, i) => (
+                <li key={i}>
+                  <span className="font-mono text-xs bg-red-100 px-1 py-0.5 rounded">
+                    {e.path}
+                  </span>{" "}
+                  {e.message}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 

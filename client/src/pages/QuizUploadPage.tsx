@@ -1,21 +1,37 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useImportQuiz } from "../api/quizzes";
-import { QuizUploader } from "../components/quiz/QuizUploader";
+import {
+  QuizUploader,
+  type ValidationErrorDetail,
+} from "../components/quiz/QuizUploader";
+import { ApiError } from "../api/client";
 import { useState } from "react";
 
 export function QuizUploadPage() {
   const navigate = useNavigate();
   const importQuiz = useImportQuiz();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<
+    ValidationErrorDetail[]
+  >([]);
 
   const handleUpload = (title: string, content: string) => {
     setServerError(null);
+    setValidationErrors([]);
     importQuiz.mutate(
       { title, content },
       {
         onSuccess: (data) => navigate(`/quizzes/${data.quiz.id}`),
         onError: (err) => {
-          setServerError(err.message || "Upload failed. Check your file format.");
+          setServerError(
+            err.message || "Upload failed. Check your file format.",
+          );
+          if (err instanceof ApiError && err.details) {
+            const details = err.details as { errors?: ValidationErrorDetail[] };
+            if (details.errors && Array.isArray(details.errors)) {
+              setValidationErrors(details.errors);
+            }
+          }
         },
       },
     );
@@ -44,6 +60,7 @@ export function QuizUploadPage() {
           onUpload={handleUpload}
           isUploading={importQuiz.isPending}
           error={serverError}
+          validationErrors={validationErrors}
         />
       </div>
     </div>
