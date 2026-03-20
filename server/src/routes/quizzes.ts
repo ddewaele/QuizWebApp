@@ -1,11 +1,13 @@
 import type { FastifyInstance } from "fastify";
 import { requireAuth } from "../middleware/require-auth.js";
 import { QuizService } from "../services/quiz.service.js";
+import { QuizImportService } from "../services/quiz-import.service.js";
 import { createQuizSchema, updateQuizSchema } from "../schemas/quiz.schema.js";
 import { ValidationError } from "../utils/errors.js";
 
 export default async function quizRoutes(fastify: FastifyInstance) {
   const quizService = new QuizService(fastify.prisma);
+  const importService = new QuizImportService(fastify.prisma);
 
   fastify.addHook("onRequest", requireAuth);
 
@@ -60,6 +62,44 @@ export default async function quizRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       await quizService.delete(request.params.id, request.userId!);
       return reply.status(204).send();
+    },
+  );
+
+  // Import quiz from JSON
+  fastify.post("/api/quizzes/import", async (request, reply) => {
+    const { title, content } = request.body as {
+      title?: string;
+      content?: string;
+    };
+
+    if (!content) {
+      throw new ValidationError("content field is required (JSON string)");
+    }
+
+    const quiz = await importService.importFromJson(
+      request.userId!,
+      title || "Imported Quiz",
+      content,
+    );
+
+    return reply.status(201).send({ quiz });
+  });
+
+  // Export quiz as JSON
+  fastify.get<{ Params: { id: string } }>(
+    "/api/quizzes/:id/export",
+    async (request, reply) => {
+      const { json, title } = await importService.exportToJson(
+        request.params.id,
+        request.userId!,
+      );
+
+      const filename = `${title.replace(/[^a-zA-Z0-9-_ ]/g, "").trim()}.json`;
+
+      return reply
+        .header("Content-Type", "application/json")
+        .header("Content-Disposition", `attachment; filename="${filename}"`)
+        .send(json);
     },
   );
 }
