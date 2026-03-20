@@ -1,0 +1,10 @@
+{
+  "name": "quizapp-shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "quiz-file.schema.ts",
+  "dependencies": {
+    "zod": "^3.24.1"
+  }
+}
