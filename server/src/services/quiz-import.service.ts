@@ -46,16 +46,8 @@ const questionSchema = z
       }
     }
 
-    for (const [key, opt] of Object.entries(q.options)) {
-      const shouldBeTrue = correctKeys.includes(key);
-      if (opt.is_true !== shouldBeTrue) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Option "${key}" has is_true=${opt.is_true} but correct_answer says it should be ${shouldBeTrue}`,
-          path: ["options", key, "is_true"],
-        });
-      }
-    }
+    // Note: is_true mismatches are auto-fixed during import (correct_answer is authoritative)
+    // so we don't reject the file here.
 
     if (
       q.question_type === "multiple_select" &&
@@ -122,14 +114,28 @@ export class QuizImportService {
         userId,
         sourceJson: parsed as any,
         questions: {
-          create: questions.map((q, index) => ({
-            questionId: q.question_id,
-            questionText: q.question_text,
-            questionType: inferQuestionType(q),
-            options: q.options,
-            correctAnswer: q.correct_answer,
-            sortOrder: index,
-          })),
+          create: questions.map((q, index) => {
+            // Auto-fix is_true based on correct_answer (source of truth)
+            const correctKeys = Array.isArray(q.correct_answer)
+              ? q.correct_answer
+              : [q.correct_answer];
+            const fixedOptions: Record<string, { text: string; is_true: boolean; explanation: string }> = {};
+            for (const [key, opt] of Object.entries(q.options)) {
+              fixedOptions[key] = {
+                ...opt,
+                is_true: correctKeys.includes(key),
+              };
+            }
+
+            return {
+              questionId: q.question_id,
+              questionText: q.question_text,
+              questionType: inferQuestionType(q),
+              options: fixedOptions,
+              correctAnswer: q.correct_answer,
+              sortOrder: index,
+            };
+          }),
         },
       },
       include: {
