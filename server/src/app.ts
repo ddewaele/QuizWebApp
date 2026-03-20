@@ -4,6 +4,7 @@ import prismaPlugin from "./plugins/prisma.js";
 import authPlugin from "./plugins/auth.js";
 import authRoutes from "./routes/auth.js";
 import quizRoutes from "./routes/quizzes.js";
+import attemptRoutes from "./routes/attempts.js";
 import { AppError } from "./utils/errors.js";
 import type { Env } from "./config.js";
 
@@ -29,6 +30,7 @@ export async function buildApp(config: Env) {
   // Routes
   await fastify.register(authRoutes, { config });
   await fastify.register(quizRoutes);
+  await fastify.register(attemptRoutes);
 
   // Global error handler
   fastify.setErrorHandler((error: FastifyError | AppError, _request, reply) => {
