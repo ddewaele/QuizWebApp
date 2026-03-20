@@ -22,15 +22,16 @@ export function QuizUploadPage() {
       { title, content },
       {
         onSuccess: (data) => navigate(`/quizzes/${data.quiz.id}`),
-        onError: (err) => {
+        onError: (err: unknown) => {
+          const apiErr = err as ApiError;
           setServerError(
-            err.message || "Upload failed. Check your file format.",
+            apiErr.message || "Upload failed. Check your file format.",
           );
-          if (err instanceof ApiError && err.details) {
-            const details = err.details as { errors?: ValidationErrorDetail[] };
-            if (details.errors && Array.isArray(details.errors)) {
-              setValidationErrors(details.errors);
-            }
+          const details = apiErr.details as
+            | { errors?: ValidationErrorDetail[] }
+            | undefined;
+          if (details?.errors && Array.isArray(details.errors)) {
+            setValidationErrors(details.errors);
           }
         },
       },

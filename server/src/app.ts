@@ -33,16 +33,17 @@ export async function buildApp(config: Env) {
   await fastify.register(attemptRoutes);
 
   // Global error handler
-  fastify.setErrorHandler((error: FastifyError | AppError, _request, reply) => {
-    if (error instanceof AppError) {
+  fastify.setErrorHandler((error: FastifyError & { details?: unknown }, _request, reply) => {
+    // AppError / ValidationError — has a numeric statusCode set by us
+    if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
       return reply.status(error.statusCode).send({
         error: error.name,
         message: error.message,
-        ...("details" in error ? { details: (error as any).details } : {}),
+        ...(error.details !== undefined ? { details: error.details } : {}),
       });
     }
 
-    // Fastify validation errors
+    // Fastify schema validation errors
     if (error.validation) {
       return reply.status(400).send({
         error: "ValidationError",

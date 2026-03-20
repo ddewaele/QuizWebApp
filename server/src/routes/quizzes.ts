@@ -73,16 +73,29 @@ export default async function quizRoutes(fastify: FastifyInstance) {
     };
 
     if (!content) {
-      throw new ValidationError("content field is required (JSON string)");
+      return reply.status(400).send({
+        error: "ValidationError",
+        message: "content field is required (JSON string)",
+      });
     }
 
-    const quiz = await importService.importFromJson(
-      request.userId!,
-      title || "Imported Quiz",
-      content,
-    );
-
-    return reply.status(201).send({ quiz });
+    try {
+      const quiz = await importService.importFromJson(
+        request.userId!,
+        title || "Imported Quiz",
+        content,
+      );
+      return reply.status(201).send({ quiz });
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        return reply.status(400).send({
+          error: "ValidationError",
+          message: err.message,
+          ...(err.details !== undefined ? { details: err.details } : {}),
+        });
+      }
+      throw err;
+    }
   });
 
   // Export quiz as JSON
