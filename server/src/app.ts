@@ -1,6 +1,8 @@
 import Fastify, { type FastifyError } from "fastify";
 import cors from "@fastify/cors";
 import prismaPlugin from "./plugins/prisma.js";
+import authPlugin from "./plugins/auth.js";
+import authRoutes from "./routes/auth.js";
 import { AppError } from "./utils/errors.js";
 import type { Env } from "./config.js";
 
@@ -19,6 +21,12 @@ export async function buildApp(config: Env) {
 
   // Database
   await fastify.register(prismaPlugin);
+
+  // Auth (sessions + Google OAuth)
+  await fastify.register(authPlugin, { config });
+
+  // Routes
+  await fastify.register(authRoutes, { config });
 
   // Global error handler
   fastify.setErrorHandler((error: FastifyError | AppError, _request, reply) => {
