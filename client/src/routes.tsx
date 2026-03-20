@@ -10,6 +10,7 @@ import { QuizUploadPage } from "./pages/QuizUploadPage";
 import { TakeQuizPage } from "./pages/TakeQuizPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultReviewPage } from "./pages/ResultReviewPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
           { path: "/quizzes/:id/take", element: <TakeQuizPage /> },
           { path: "/results", element: <ResultsPage /> },
           { path: "/results/:id", element: <ResultReviewPage /> },
+          { path: "*", element: <NotFoundPage /> },
         ],
       },
     ],
