@@ -40,7 +40,16 @@ const questionSchema = z
       }
     }
 
-    // is_true mismatches are tolerated (auto-fixed on import)
+    for (const [key, opt] of Object.entries(q.options)) {
+      const shouldBeTrue = correctKeys.includes(key);
+      if (opt.is_true !== shouldBeTrue) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Option "${key}" has is_true=${opt.is_true} but correct_answer says it should be ${shouldBeTrue}`,
+          path: ["options", key, "is_true"],
+        });
+      }
+    }
 
     if (q.question_type === "multiple_select" && !Array.isArray(q.correct_answer)) {
       ctx.addIssue({
@@ -117,16 +126,16 @@ describe("Quiz file validation", () => {
     expect(result.success).toBe(false);
   });
 
-  it("accepts is_true mismatch (auto-fixed on import)", () => {
+  it("rejects is_true mismatch", () => {
     const q = makeQuestion({
       options: {
-        a: { text: "3", is_true: true, explanation: "Wrong" }, // mismatch, but tolerated
+        a: { text: "3", is_true: true, explanation: "Wrong" }, // should be false
         b: { text: "4", is_true: true, explanation: "Correct" },
       },
       correct_answer: "b",
     });
     const result = quizFileSchema.safeParse([q]);
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
   it("rejects fewer than 2 options", () => {

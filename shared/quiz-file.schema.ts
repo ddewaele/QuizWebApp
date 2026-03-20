@@ -51,8 +51,17 @@ export const questionSchema = z
       }
     }
 
-    // Note: is_true mismatches with correct_answer are tolerated during import.
-    // correct_answer is the source of truth; is_true is auto-fixed on import.
+    // Validate is_true matches correct_answer
+    for (const [key, opt] of Object.entries(q.options)) {
+      const shouldBeTrue = correctKeys.includes(key);
+      if (opt.is_true !== shouldBeTrue) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Option "${key}" has is_true=${opt.is_true} but correct_answer says it should be ${shouldBeTrue}`,
+          path: ["options", key, "is_true"],
+        });
+      }
+    }
 
     // Validate question_type consistency
     const isMultiSelect =
