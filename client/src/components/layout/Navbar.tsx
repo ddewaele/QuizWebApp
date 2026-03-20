@@ -1,17 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useCurrentUser, useLogout } from "../../api/auth";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export function Navbar() {
-  const { data } = useCurrentUser();
-  const logout = useLogout();
-  const navigate = useNavigate();
-  const user = data?.user;
-
-  const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSuccess: () => navigate("/login"),
-    });
-  };
+  const { user, logout, isLoggingOut } = useAuth();
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -45,11 +36,14 @@ export function Navbar() {
                   className="w-8 h-8 rounded-full"
                 />
               )}
-              <span className="text-sm text-gray-700">{user.name || user.email}</span>
+              <span className="text-sm text-gray-700">
+                {user.name || user.email}
+              </span>
             </div>
             <button
-              onClick={handleLogout}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              onClick={logout}
+              disabled={isLoggingOut}
+              className="text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
             >
               Sign out
             </button>

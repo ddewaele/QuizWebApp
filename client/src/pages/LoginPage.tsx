@@ -1,9 +1,33 @@
+import { useSearchParams, Navigate } from "react-router-dom";
+import { useCurrentUser } from "../api/auth";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  oauth_failed: "Google sign-in failed. Please try again.",
+  no_email: "Could not retrieve your email from Google.",
+};
+
 export function LoginPage() {
+  const [searchParams] = useSearchParams();
+  const error = searchParams.get("error");
+  const { data, isLoading } = useCurrentUser();
+
+  // Redirect to dashboard if already authenticated
+  if (!isLoading && data?.user) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-sm w-full bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">QuizApp</h1>
         <p className="text-gray-600 mb-8">Sign in to manage your quizzes</p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            {ERROR_MESSAGES[error] || "An error occurred. Please try again."}
+          </div>
+        )}
+
         <a
           href="/api/auth/google"
           className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
