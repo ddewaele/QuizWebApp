@@ -23,7 +23,58 @@ A full-stack quiz management web application built with React, Fastify, Prisma, 
 
 - Node.js 22+
 - Docker & Docker Compose
-- A Google OAuth 2.0 client (create at [Google Cloud Console](https://console.cloud.google.com/apis/credentials))
+- A Google Cloud project with OAuth 2.0 credentials (see below)
+
+## Google OAuth 2.0 Setup
+
+The app uses Google Sign-In for authentication. Follow these steps to create the required OAuth credentials:
+
+### 1. Create a Google Cloud project
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Click the project dropdown at the top and select **New Project**
+3. Enter a project name (e.g. "QuizApp") and click **Create**
+4. Make sure the new project is selected in the dropdown
+
+### 2. Configure the OAuth consent screen
+
+1. Navigate to **APIs & Services > OAuth consent screen** ([direct link](https://console.cloud.google.com/apis/credentials/consent))
+2. Select **External** as the user type and click **Create**
+3. Fill in the required fields:
+   - **App name:** QuizApp (or any name)
+   - **User support email:** your email
+   - **Developer contact email:** your email
+4. Click **Save and Continue**
+5. On the **Scopes** page, click **Add or Remove Scopes** and add:
+   - `openid`
+   - `email`
+   - `profile`
+6. Click **Save and Continue** through the remaining steps
+
+> **Note:** While in "Testing" status, only test users you explicitly add can sign in. Add your Google account under **OAuth consent screen > Test users** if needed. For broader access, submit the app for verification or switch to an Internal user type (Google Workspace only).
+
+### 3. Create OAuth 2.0 credentials
+
+1. Navigate to **APIs & Services > Credentials** ([direct link](https://console.cloud.google.com/apis/credentials))
+2. Click **+ Create Credentials > OAuth client ID**
+3. Select **Web application** as the application type
+4. Set the name (e.g. "QuizApp Local Dev")
+5. Under **Authorized JavaScript origins**, add:
+   ```
+   http://localhost:5174
+   ```
+6. Under **Authorized redirect URIs**, add:
+   ```
+   http://localhost:5174/api/auth/google/callback
+   ```
+7. Click **Create**
+8. Copy the **Client ID** and **Client Secret** — you'll need these for the `.env` file
+
+### 4. Important notes
+
+- The redirect URI must exactly match what is configured in the server's auth plugin. The Vite dev server proxies `/api/*` requests to the Fastify backend, so the callback URL uses the frontend origin (`localhost:5174`), not the backend port.
+- If you change the client port, update the redirect URI in Google Cloud Console to match.
+- For production, add the production domain to both **Authorized JavaScript origins** and **Authorized redirect URIs**.
 
 ## Setup
 
@@ -39,10 +90,33 @@ docker compose up -d
 cp .env.example server/.env
 ```
 
-Edit `server/.env` with your Google OAuth credentials and generate a session secret:
+Edit `server/.env` and fill in:
+
+| Variable | Value |
+|----------|-------|
+| `DATABASE_URL` | Pre-filled, works with the docker-compose PostgreSQL |
+| `GOOGLE_CLIENT_ID` | Client ID from step 3 above |
+| `GOOGLE_CLIENT_SECRET` | Client Secret from step 3 above |
+| `SESSION_SECRET` | Generate with the command below |
+| `CLIENT_URL` | `http://localhost:5174` |
+
+Generate a session secret:
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Example `server/.env`:
+
+```env
+DATABASE_URL="postgresql://quiz:quiz_dev_password@localhost:5433/quizapp?schema=public"
+GOOGLE_CLIENT_ID="123456789-abcdefg.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="GOCSPX-your-secret-here"
+SESSION_SECRET="your-64-char-hex-string-here"
+PORT=3000
+HOST="0.0.0.0"
+NODE_ENV="development"
+CLIENT_URL="http://localhost:5174"
 ```
 
 ### 3. Install dependencies
@@ -64,7 +138,7 @@ cd server && npm run dev
 cd client && npm run dev
 ```
 
-The app will be available at `http://localhost:5173`. The Vite dev server proxies API requests to the Fastify backend on port 3000.
+The app will be available at `http://localhost:5174`. The Vite dev server proxies `/api` requests to the Fastify backend on port 3000.
 
 ## Quiz JSON Format
 
