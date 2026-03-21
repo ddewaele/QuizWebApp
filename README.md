@@ -14,10 +14,10 @@ A full-stack quiz management web application built with React, Fastify, Prisma, 
 
 ## Tech Stack
 
-**Frontend:** React, TypeScript, Vite, Tailwind CSS, TanStack Query, React Router
-**Backend:** Fastify, TypeScript, Prisma ORM, Zod validation
-**Database:** PostgreSQL
-**Auth:** Google OAuth 2.0 with secure cookie sessions
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, TanStack Query, React Router
+- **Backend:** Fastify, TypeScript, Prisma ORM, Zod validation
+- **Database:** PostgreSQL
+- **Auth:** Google OAuth 2.0 with secure cookie sessions
 
 ## Prerequisites
 
