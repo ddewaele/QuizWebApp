@@ -340,18 +340,195 @@ return { access_token: accessToken, refresh_token: refreshToken };
 
 ## Comparison Summary
 
-| | API Keys | JWT Token Endpoint | Full JWT Migration | Client Credentials |
-|-|----------|-------------------|-------------------|-------------------|
-| **Change size** | Small (additive) | Medium | Large (rearchitect) | Medium |
-| **Web app impact** | None | None | Full rewrite of auth flow | None |
-| **Works for CLI** | Yes | Yes | Yes | No (no user identity) |
-| **Works for mobile** | Yes | Yes | Yes | No |
-| **Works cross-origin** | Yes | Yes | Yes | Yes |
-| **Revocable** | Yes (DB flag) | No (until expiry) | No (until expiry) | Yes |
-| **DB lookup per request** | Yes (key lookup) | No (signature check) | No (signature check) | Yes |
-| **Security if leaked** | Full access until revoked | Access until token expires | Access until token expires | Service-level access |
-| **User effort** | Create key in UI | Create token in UI | Sign in, app handles tokens | Configure client ID/secret |
-| **Implementation effort** | ~1 day | ~2-3 days | ~1 week | ~2 days |
+| | API Keys | JWT Endpoint | Full JWT | Client Creds | OAuth2 Server |
+|-|----------|-------------|----------|-------------|---------------|
+| **Change size** | Small | Medium | Large | Medium | Very large |
+| **Web app impact** | None | None | Full rewrite | None | None |
+| **Works for CLI** | Yes | Yes | Yes | No | Yes |
+| **Works for mobile** | Yes | Yes | Yes | No | Yes |
+| **Third-party apps** | No | No | No | No | Yes |
+| **Scoped access** | No | No | No | No | Yes |
+| **Works cross-origin** | Yes | Yes | Yes | Yes | Yes |
+| **Revocable** | Yes | No (until expiry) | No (until expiry) | Yes | Yes |
+| **DB lookup/request** | Yes | No | No | Yes | Yes |
+| **Implementation** | ~1 day | ~2-3 days | ~1 week | ~2 days | ~2 weeks (or use Auth0) |
+
+## Option E: Becoming an OAuth2 Authorization Server
+
+A natural question: can we let users obtain a `client_id` and `client_secret` from our app and use the standard OAuth2 Authorization Code flow to access our API — the same pattern we use when authenticating with Google?
+
+The answer is yes, but it means building something fundamentally different.
+
+### The distinction: OAuth2 client vs. OAuth2 server
+
+**What we are today:** An OAuth2 **client**. We redirect users to Google (the authorization server), Google authenticates them, and we consume Google's tokens to identify the user. Google built the authorization server infrastructure — consent screens, token endpoints, client management. We just use it.
+
+**What this option requires:** Becoming an OAuth2 **authorization server** ourselves. We would issue our own client IDs, client secrets, and authorization codes. Third-party applications (or the user's own scripts) would go through the OAuth2 flow against **our** authorization endpoint, not Google's.
+
+```
+Current (we are a client):
+  Our app → Google's OAuth server → Google issues tokens → We consume them
+
+Option E (we become a server):
+  Third-party app → Our OAuth server → We issue tokens → They consume them
+
+  (We still use Google for initial user login — that doesn't change.
+   But we add a second OAuth layer where WE are the authority.)
+```
+
+### What you'd need to build
+
+**1. Application registry**
+
+A UI and API where developers register OAuth applications, similar to Google Cloud Console's "Create OAuth Client" or GitHub's Developer Settings:
+
+```
+POST /api/oauth/applications
+{
+  "name": "My Quiz CLI",
+  "redirect_uris": ["http://localhost:8080/callback"]
+}
+→ { "client_id": "app_abc123", "client_secret": "secret_xyz789" }
+```
+
+New database model:
+
+```prisma
+model OAuthApplication {
+  id           String   @id @default(cuid())
+  name         String
+  clientId     String   @unique
+  clientSecret String                    // hashed
+  redirectUris String[]
+  userId       String                    // who registered this app
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+}
+```
+
+**2. Authorization endpoint** (`GET /oauth/authorize`)
+
+When a third-party app wants access, it redirects the user's browser here:
+
+```
+GET /oauth/authorize?
+  client_id=app_abc123&
+  redirect_uri=http://localhost:8080/callback&
+  response_type=code&
+  scope=quizzes:read+attempts:write&
+  state=random123
+```
+
+Our server shows a consent page: *"My Quiz CLI wants to access your quizzes. Allow?"*
+
+If the user clicks Allow, we redirect back with an authorization code:
+
+```
+HTTP 302 → http://localhost:8080/callback?code=authcode_xxx&state=random123
+```
+
+**3. Token endpoint** (`POST /oauth/token`)
+
+The third-party app exchanges the authorization code for tokens:
+
+```
+POST /oauth/token
+  grant_type=authorization_code&
+  code=authcode_xxx&
+  client_id=app_abc123&
+  client_secret=secret_xyz789&
+  redirect_uri=http://localhost:8080/callback
+
+→ {
+    "access_token": "at_...",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "refresh_token": "rt_..."
+  }
+```
+
+**4. Token storage and validation**
+
+```prisma
+model OAuthToken {
+  id            String    @id @default(cuid())
+  accessToken   String    @unique    // hashed
+  refreshToken  String?   @unique    // hashed
+  userId        String
+  applicationId String
+  scopes        String[]
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+}
+```
+
+Every API request with `Authorization: Bearer at_...` looks up the token, checks expiry, checks scopes, and resolves the userId.
+
+**5. Supporting infrastructure**
+
+- Consent screen UI (HTML page rendered by the server)
+- Scope definitions and enforcement (e.g., `quizzes:read` allows `GET /api/quizzes` but not `DELETE`)
+- Token refresh endpoint (`POST /oauth/token` with `grant_type=refresh_token`)
+- Token revocation endpoint (`POST /oauth/revoke`)
+- PKCE support (for public clients like CLIs that can't securely store a client secret)
+- Rate limiting per application
+- Application management UI (list apps, view usage, revoke)
+
+### Estimated effort
+
+| Component | Effort |
+|-----------|--------|
+| Application registry (DB + API + UI) | 2-3 days |
+| Authorization endpoint + consent screen | 2-3 days |
+| Token endpoint (code exchange + refresh) | 2-3 days |
+| Token validation middleware | 1 day |
+| Scopes enforcement | 1-2 days |
+| Revocation + security hardening | 1-2 days |
+| **Total** | **~2 weeks** |
+
+This is a substantial feature — effectively building a mini Auth0.
+
+### When this makes sense
+
+- You're building a **platform** where third-party developers create integrations (like Slack apps, GitHub integrations, Stripe Connect)
+- You need **delegated access with scopes** — "App X can read my quizzes but not delete them"
+- Multiple independent applications (built by different people) need to access your API on behalf of your users
+- You want to give users explicit control over which apps have access to their data
+
+### When this doesn't make sense
+
+- A single user wanting to call their own API from a script — **API keys (Option A)** are vastly simpler
+- A mobile app you control — **JWT token endpoint (Option C)** is simpler
+- Internal service-to-service communication — shared API keys or Client Credentials are simpler
+- You have fewer than a handful of API consumers — the OAuth2 authorization server machinery is overengineered
+
+### Off-the-shelf alternatives
+
+If you did need this capability, you wouldn't build it from scratch. You'd use a dedicated authorization server:
+
+| Solution | Type | Notes |
+|----------|------|-------|
+| **Auth0** | Managed SaaS | Full OAuth2/OIDC server. Free tier: 25K monthly active users. Handles everything — consent, tokens, scopes, revocation. |
+| **Clerk** | Managed SaaS | Modern auth platform. Simpler than Auth0, good developer experience. |
+| **Ory Hydra** | Open source (self-hosted) | OAuth2/OIDC server in Go. You provide the login/consent UI, Hydra handles the protocol. Production-grade. |
+| **Keycloak** | Open source (self-hosted) | Full identity provider (Java). Heavy but complete. Widely used in enterprise. |
+| **Ory Cloud** | Managed | Hosted version of Ory Hydra. Avoids self-hosting complexity. |
+
+These solutions plug into your existing app: they handle the OAuth2 protocol, you handle the business logic. Your Fastify server would validate tokens issued by the authorization server instead of checking cookies or API keys.
+
+### Comparison with simpler options
+
+| | API Keys (A) | JWT Endpoint (C) | OAuth2 Server (E) |
+|-|-------------|-------------------|-------------------|
+| User gets credentials from | Our UI (Settings page) | Our UI (Settings page) | Our UI (Developer portal) |
+| Auth flow | None — just send the key | None — just send the token | Full OAuth2 redirect dance |
+| Third-party apps | No (key = full user access) | No (token = full user access) | Yes (scoped, delegated access) |
+| Consent/approval | Implicit (user creates key) | Implicit (user creates token) | Explicit (consent screen) |
+| Scope control | No | No | Yes (fine-grained permissions) |
+| Implementation | ~1 day | ~2-3 days | ~2 weeks (or use Auth0/Ory) |
+| Right for | Scripts, CLI, personal use | Mobile apps, controlled clients | Platform, third-party ecosystem |
+
+---
 
 ## Recommendation
 
@@ -360,5 +537,7 @@ return { access_token: accessToken, refresh_token: refreshToken };
 **If you need CLI/script access:** Add API keys (Option A). It's a 1-day change — new DB model, middleware tweak, key management UI. No impact on the existing web app.
 
 **If you need mobile apps or a public developer API:** Add a JWT token endpoint (Option C). Users authenticate via browser (existing OAuth flow), then generate tokens for other clients. Web app stays on cookies.
+
+**If you're building a platform with third-party integrations:** Become an OAuth2 authorization server (Option E) — but use Auth0, Ory Hydra, or Keycloak instead of building from scratch. Only justified if external developers need scoped, delegated access to your users' data.
 
 **Avoid full JWT migration (Option D)** unless you have a concrete requirement that cookies can't satisfy. The complexity cost is high and the security properties are worse for browser-based usage.
