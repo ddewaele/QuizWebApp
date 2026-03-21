@@ -2,7 +2,10 @@ import { z } from "zod";
 
 /**
  * Zod schemas for the quiz JSON import/export format.
- * This is the canonical definition of the file format the app accepts.
+ *
+ * correct_answer is always a string[] — single-select questions have one element,
+ * multiple-select questions have two or more. question_type is not part of the format;
+ * it is derived from correct_answer.length.
  */
 
 export const optionSchema = z.object({
@@ -29,19 +32,12 @@ export const questionSchema = z
           "Options must have at least 2 entries with single lowercase letter keys (a, b, c, ...)",
       }
     ),
-    correct_answer: z.union([z.string(), z.array(z.string())]),
-    question_type: z.string().optional(),
+    correct_answer: z.array(z.string()).min(1, "At least one correct answer is required"),
   })
   .superRefine((q, ctx) => {
     const optionKeys = Object.keys(q.options);
 
-    // Normalize correct_answer to array
-    const correctKeys = Array.isArray(q.correct_answer)
-      ? q.correct_answer
-      : [q.correct_answer];
-
-    // Validate correct_answer references existing option keys
-    for (const key of correctKeys) {
+    for (const key of q.correct_answer) {
       if (!optionKeys.includes(key)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -51,9 +47,8 @@ export const questionSchema = z
       }
     }
 
-    // Validate is_true matches correct_answer
     for (const [key, opt] of Object.entries(q.options)) {
-      const shouldBeTrue = correctKeys.includes(key);
+      const shouldBeTrue = q.correct_answer.includes(key);
       if (opt.is_true !== shouldBeTrue) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -61,21 +56,6 @@ export const questionSchema = z
           path: ["options", key, "is_true"],
         });
       }
-    }
-
-    // Validate question_type consistency
-    const isMultiSelect =
-      Array.isArray(q.correct_answer) || q.question_type === "multiple_select";
-    if (q.question_type === "multiple_select" && !Array.isArray(q.correct_answer)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          'question_type is "multiple_select" but correct_answer is not an array',
-        path: ["correct_answer"],
-      });
-    }
-    if (Array.isArray(q.correct_answer) && q.correct_answer.length < 2 && isMultiSelect) {
-      // An array with 1 element is technically valid but unusual — allow it
     }
   });
 
@@ -93,12 +73,3 @@ export const quizFileSchema = z
   );
 
 export type QuizFile = z.infer<typeof quizFileSchema>;
-
-/** Infer the question type from a question object */
-export function inferQuestionType(
-  q: Pick<QuizFileQuestion, "correct_answer" | "question_type">
-): "single_select" | "multiple_select" {
-  if (q.question_type === "multiple_select") return "multiple_select";
-  if (Array.isArray(q.correct_answer)) return "multiple_select";
-  return "single_select";
-}

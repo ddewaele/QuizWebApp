@@ -3,9 +3,8 @@ import type { QuizOption } from "../../types";
 interface QuestionData {
   questionId: number;
   questionText: string;
-  questionType: "single_select" | "multiple_select";
   options: Record<string, QuizOption>;
-  correctAnswer: string | string[];
+  correctAnswer: string[];
 }
 
 interface QuestionEditorProps {
@@ -24,6 +23,7 @@ export function QuestionEditor({
   onRemove,
 }: QuestionEditorProps) {
   const optionEntries = Object.entries(question.options);
+  const isMultiSelect = question.correctAnswer.length > 1;
 
   const updateField = <K extends keyof QuestionData>(
     key: K,
@@ -55,38 +55,28 @@ export function QuestionEditor({
     const newOptions = { ...question.options };
     delete newOptions[key];
 
-    // Update correct answer
-    let newCorrect = question.correctAnswer;
-    if (Array.isArray(newCorrect)) {
-      newCorrect = newCorrect.filter((k) => k !== key);
-      if (newCorrect.length === 0) newCorrect = [Object.keys(newOptions)[0]];
-    } else if (newCorrect === key) {
-      newCorrect = Object.keys(newOptions)[0];
-    }
+    let newCorrect = question.correctAnswer.filter((k) => k !== key);
+    if (newCorrect.length === 0) newCorrect = [Object.keys(newOptions)[0]];
 
     onChange({ ...question, options: newOptions, correctAnswer: newCorrect });
   };
 
   const toggleCorrect = (key: string) => {
-    if (question.questionType === "single_select") {
-      // Set this as the only correct answer, update is_true on all options
+    if (!isMultiSelect) {
+      // Single-select: set this as the only correct answer
       const newOptions = { ...question.options };
       for (const k of Object.keys(newOptions)) {
         newOptions[k] = { ...newOptions[k], is_true: k === key };
       }
-      onChange({ ...question, options: newOptions, correctAnswer: key });
+      onChange({ ...question, options: newOptions, correctAnswer: [key] });
     } else {
-      // Toggle in the array
-      const currentCorrect = Array.isArray(question.correctAnswer)
-        ? question.correctAnswer
-        : [question.correctAnswer];
-
+      // Multi-select: toggle in the array
       let newCorrect: string[];
-      if (currentCorrect.includes(key)) {
-        newCorrect = currentCorrect.filter((k) => k !== key);
+      if (question.correctAnswer.includes(key)) {
+        newCorrect = question.correctAnswer.filter((k) => k !== key);
         if (newCorrect.length === 0) return; // Must have at least one
       } else {
-        newCorrect = [...currentCorrect, key];
+        newCorrect = [...question.correctAnswer, key];
       }
 
       const newOptions = { ...question.options };
@@ -97,44 +87,17 @@ export function QuestionEditor({
     }
   };
 
-  const toggleQuestionType = () => {
-    const newType =
-      question.questionType === "single_select"
-        ? "multiple_select"
-        : "single_select";
-
-    let newCorrect: string | string[];
-    if (newType === "single_select") {
-      const current = Array.isArray(question.correctAnswer)
-        ? question.correctAnswer[0]
-        : question.correctAnswer;
-      newCorrect = current || Object.keys(question.options)[0];
-    } else {
-      newCorrect = Array.isArray(question.correctAnswer)
-        ? question.correctAnswer
-        : [question.correctAnswer];
+  const toggleMultiSelect = () => {
+    if (isMultiSelect) {
+      // Switch to single-select: keep only first correct answer
+      const newCorrect = [question.correctAnswer[0]];
+      const newOptions = { ...question.options };
+      for (const k of Object.keys(newOptions)) {
+        newOptions[k] = { ...newOptions[k], is_true: newCorrect.includes(k) };
+      }
+      onChange({ ...question, options: newOptions, correctAnswer: newCorrect });
     }
-
-    // Sync is_true
-    const correctKeys = Array.isArray(newCorrect) ? newCorrect : [newCorrect];
-    const newOptions = { ...question.options };
-    for (const k of Object.keys(newOptions)) {
-      newOptions[k] = { ...newOptions[k], is_true: correctKeys.includes(k) };
-    }
-
-    onChange({
-      ...question,
-      questionType: newType,
-      correctAnswer: newCorrect,
-      options: newOptions,
-    });
-  };
-
-  const isCorrect = (key: string) => {
-    if (Array.isArray(question.correctAnswer)) {
-      return question.correctAnswer.includes(key);
-    }
-    return question.correctAnswer === key;
+    // Switching to multi-select doesn't change anything — just allow more toggles
   };
 
   return (
@@ -146,12 +109,10 @@ export function QuestionEditor({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={toggleQuestionType}
+            onClick={toggleMultiSelect}
             className="text-xs px-2 py-1 rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
           >
-            {question.questionType === "single_select"
-              ? "Single select"
-              : "Multiple select"}
+            {isMultiSelect ? "Multiple select" : "Single select"}
           </button>
           <button
             type="button"
@@ -184,11 +145,11 @@ export function QuestionEditor({
                 type="button"
                 onClick={() => toggleCorrect(key)}
                 className={`mt-1.5 flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${
-                  isCorrect(key)
+                  question.correctAnswer.includes(key)
                     ? "bg-green-500 border-green-500 text-white"
                     : "border-gray-300 text-gray-400 hover:border-green-400"
                 }`}
-                title={isCorrect(key) ? "Correct answer" : "Mark as correct"}
+                title={question.correctAnswer.includes(key) ? "Correct answer" : "Mark as correct"}
               >
                 {key}
               </button>

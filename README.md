@@ -142,7 +142,7 @@ The app will be available at `http://localhost:5174`. The Vite dev server proxie
 
 ## Quiz JSON Format
 
-Quizzes are imported/exported as a JSON array of question objects:
+Quizzes are imported/exported as a JSON array of question objects. `correct_answer` is always an array — single-select questions have one element, multiple-select questions have two or more:
 
 ```json
 [
@@ -154,12 +154,11 @@ Quizzes are imported/exported as a JSON array of question objects:
       "b": { "text": "4", "is_true": true, "explanation": "Correct!" },
       "c": { "text": "5", "is_true": false, "explanation": "Incorrect" }
     },
-    "correct_answer": "b"
+    "correct_answer": ["b"]
   },
   {
     "question_id": 2,
     "question_text": "Which are prime?",
-    "question_type": "multiple_select",
     "options": {
       "a": { "text": "2", "is_true": true, "explanation": "2 is prime" },
       "b": { "text": "4", "is_true": false, "explanation": "4 = 2×2" },

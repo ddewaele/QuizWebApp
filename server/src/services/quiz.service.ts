@@ -46,7 +46,6 @@ export class QuizService {
           create: input.questions.map((q, index) => ({
             questionId: q.questionId,
             questionText: q.questionText,
-            questionType: q.questionType,
             options: q.options as Prisma.InputJsonValue,
             correctAnswer: q.correctAnswer as Prisma.InputJsonValue,
             sortOrder: index,
@@ -78,7 +77,6 @@ export class QuizService {
             quizId: id,
             questionId: q.questionId,
             questionText: q.questionText,
-            questionType: q.questionType,
             options: q.options as Prisma.InputJsonValue,
             correctAnswer: q.correctAnswer as Prisma.InputJsonValue,
             sortOrder: index,

@@ -9,9 +9,7 @@ export function ResultReview({ answers }: ResultReviewProps) {
     <div className="space-y-4">
       {answers.map((answer, i) => {
         const q = answer.question;
-        const correctKeys = Array.isArray(q.correctAnswer)
-          ? q.correctAnswer
-          : [q.correctAnswer];
+        const correctKeys = q.correctAnswer;
 
         return (
           <div
@@ -32,7 +30,7 @@ export function ResultReview({ answers }: ResultReviewProps) {
               </span>
               <div className="flex-1">
                 <p className="font-medium text-gray-900">{q.questionText}</p>
-                {q.questionType === "multiple_select" && (
+                {q.correctAnswer.length > 1 && (
                   <span className="inline-block mt-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
                     Multiple select
                   </span>

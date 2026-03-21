@@ -18,12 +18,11 @@ function createEmptyQuestion(id: number): QuestionData {
   return {
     questionId: id,
     questionText: "",
-    questionType: "single_select",
     options: {
       a: { text: "", is_true: true, explanation: "" },
       b: { text: "", is_true: false, explanation: "" },
     },
-    correctAnswer: "a",
+    correctAnswer: ["a"],
   };
 }
 

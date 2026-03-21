@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
-import { quizFileSchema, inferQuestionType } from "../../../shared/quiz-file.schema.js";
+import { quizFileSchema } from "../../../shared/quiz-file.schema.js";
 import { ValidationError } from "../utils/errors.js";
 
 export class QuizImportService {
@@ -34,7 +34,6 @@ export class QuizImportService {
           create: questions.map((q, index) => ({
             questionId: q.question_id,
             questionText: q.question_text,
-            questionType: inferQuestionType(q),
             options: q.options,
             correctAnswer: q.correct_answer,
             sortOrder: index,
@@ -65,9 +64,6 @@ export class QuizImportService {
       question_text: q.questionText,
       options: q.options,
       correct_answer: q.correctAnswer,
-      ...(q.questionType === "multiple_select"
-        ? { question_type: "multiple_select" }
-        : {}),
     }));
 
     return { json: exported, title: quiz.title };

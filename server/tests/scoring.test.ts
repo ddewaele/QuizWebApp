@@ -2,38 +2,34 @@ import { describe, it, expect } from "vitest";
 
 /**
  * Test the scoring logic in isolation.
- * Mirrors the checkAnswer function from attempt.service.ts
+ * Mirrors the checkAnswer function from attempt.service.ts.
+ * correct_answer is always string[].
  */
 function checkAnswer(
-  correctAnswer: string | string[],
+  correctAnswer: string[],
   selectedKeys: string[],
 ): boolean {
-  const correctKeys = Array.isArray(correctAnswer)
-    ? [...correctAnswer].sort()
-    : [correctAnswer];
-
-  const sortedSelected = [...selectedKeys].sort();
-
-  if (correctKeys.length !== sortedSelected.length) return false;
-  return correctKeys.every((key, i) => key === sortedSelected[i]);
+  if (correctAnswer.length !== selectedKeys.length) return false;
+  const correctSet = new Set(correctAnswer);
+  return selectedKeys.every((key) => correctSet.has(key));
 }
 
 describe("Scoring logic", () => {
   describe("Single-select", () => {
     it("correct when selected matches", () => {
-      expect(checkAnswer("b", ["b"])).toBe(true);
+      expect(checkAnswer(["b"], ["b"])).toBe(true);
     });
 
     it("incorrect when selected does not match", () => {
-      expect(checkAnswer("b", ["a"])).toBe(false);
+      expect(checkAnswer(["b"], ["a"])).toBe(false);
     });
 
     it("incorrect when multiple selected for single-select", () => {
-      expect(checkAnswer("b", ["a", "b"])).toBe(false);
+      expect(checkAnswer(["b"], ["a", "b"])).toBe(false);
     });
 
     it("incorrect when nothing selected", () => {
-      expect(checkAnswer("b", [])).toBe(false);
+      expect(checkAnswer(["b"], [])).toBe(false);
     });
   });
 

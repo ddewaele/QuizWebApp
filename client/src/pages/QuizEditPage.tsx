@@ -8,7 +8,6 @@ function questionToFormData(q: QuizQuestion): QuestionData {
   return {
     questionId: q.questionId,
     questionText: q.questionText,
-    questionType: q.questionType,
     options: q.options,
     correctAnswer: q.correctAnswer,
   };

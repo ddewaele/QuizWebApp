@@ -15,7 +15,7 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
 
   const question = questions[currentIndex];
   const selectedKeys = answers[question.id] ?? [];
-  const isMultiSelect = question.questionType === "multiple_select";
+  const isMultiSelect = question.correctAnswer.length > 1;
   const totalAnswered = Object.keys(answers).length;
   const allAnswered = totalAnswered === questions.length;
 

@@ -17,9 +17,8 @@ export interface QuizQuestion {
   quizId: string;
   questionId: number;
   questionText: string;
-  questionType: "single_select" | "multiple_select";
   options: Record<string, QuizOption>;
-  correctAnswer: string | string[];
+  correctAnswer: string[];
   sortOrder: number;
 }
 

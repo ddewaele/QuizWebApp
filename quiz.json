@@ -24,7 +24,9 @@
         "explanation": "Facial recognition is used to identify faces in images, not to read text on street signs."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 2,
@@ -46,7 +48,9 @@
         "explanation": "Clustering groups similar data points together but doesn't predict specific yield values."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 3,
@@ -73,7 +77,9 @@
         "explanation": "While Computer Vision can analyze images, it cannot be trained on custom image sets like Custom Vision can."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 4,
@@ -100,7 +106,9 @@
         "explanation": "Anomaly detection identifies unusual patterns in data, not responds to natural language questions."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 5,
@@ -122,7 +130,9 @@
         "explanation": "Document Intelligence can extract and analyze document content, including identifying sensitive information within documents."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 6,
@@ -149,7 +159,9 @@
         "explanation": "Language service handles text analysis but doesn't provide the bot framework needed for conversational solutions."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 7,
@@ -176,7 +188,9 @@
         "explanation": "This relates to privacy and security, not transparency."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 8,
@@ -198,7 +212,9 @@
         "explanation": "Microsoft Copilot Studio is a no-code platform that allows building copilots and conversational applications with built-in natural language processing capabilities."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 9,
@@ -225,7 +241,9 @@
         "explanation": "Creating a new model is unnecessary; the None intent handles out-of-scope utterances."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 10,
@@ -252,7 +270,9 @@
         "explanation": "Translation converts text between languages but doesn't create audio narration."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 11,
@@ -279,12 +299,13 @@
         "explanation": "While translation is correct, sentiment analysis is not the primary workload for categorizing manuscripts by topic."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 12,
     "question_text": "You have an app that identifies birds in images. The app performs the following tasks: Identifies the location of the birds in the image, Identifies the species of the birds in the image. Which type of computer vision does each task use?",
-    "question_type": "multiple_select",
     "options": {
       "a": {
         "text": "Locate the birds: Automated captioning; Identify the species: Automated captioning",
@@ -307,7 +328,9 @@
         "explanation": "OCR is for reading text, not for locating or identifying birds."
       }
     },
-    "correct_answer": ["c"]
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 13,
@@ -334,7 +357,9 @@
         "explanation": "While Computer Vision can analyze images, the Face service is specifically designed for identifying and tagging faces."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 14,
@@ -361,7 +386,9 @@
         "explanation": "Text extraction (OCR) is used to identify and extract text like vehicle registration numbers from images."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 15,
@@ -388,12 +415,13 @@
         "explanation": "OCR is for text recognition, not for identifying product coordinates on shelves."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 16,
     "question_text": "For which two workloads can you use computer vision?",
-    "question_type": "multiple_select",
     "options": {
       "a": {
         "text": "assigning the color pixels in an image to object names",
@@ -446,7 +474,9 @@
         "explanation": "Regression models predict numeric values based on input features, which is exactly what predicting hours of overtime requires."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 18,
@@ -473,7 +503,9 @@
         "explanation": "Azure Bot Service enables creation of intelligent bots that can understand natural language queries across multiple channels including phones, social media, and digital assistants."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 19,
@@ -500,7 +532,9 @@
         "explanation": "Instances refer to individual examples or data points, but the term for input data columns is features."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 20,
@@ -527,7 +561,9 @@
         "explanation": "This is an incorrect matching. Image Classification doesn't locate specific objects, that's Object Detection's role."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 21,
@@ -554,7 +590,9 @@
         "explanation": "Speech service converts audio to text and vice versa, but doesn't extract intent."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 22,
@@ -581,7 +619,9 @@
         "explanation": "Anomaly detection is specifically designed to identify unusual patterns or outliers in data, such as unexpected temperature fluctuations in machinery."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 23,
@@ -608,7 +648,9 @@
         "explanation": "While Language service can process text, Document Intelligence is specifically designed for extracting structured data from documents like receipts."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 24,
@@ -635,7 +677,9 @@
         "explanation": "A threshold is a cutoff value for classification, not a grid for displaying predictions."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 25,
@@ -662,7 +706,9 @@
         "explanation": "Inclusiveness means ensuring AI systems work for everyone and identifying barriers that might exclude specific user groups, which is exactly what the company is doing with voice recognition."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 26,
@@ -689,7 +735,9 @@
         "explanation": "Pattern.any is not a standard NLP entity type for identifying phone numbers."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 27,
@@ -716,7 +764,9 @@
         "explanation": "Key phrase extraction identifies the main topics and important points in documents, which directly addresses identifying talking points."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 28,
@@ -743,7 +793,9 @@
         "explanation": "Entity recognition identifies named entities like city names from text and can track their frequency in social media posts."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 29,
@@ -760,7 +812,9 @@
         "explanation": "This statement is true - bots that understand and respond to user queries rely on natural language processing."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 30,
@@ -777,7 +831,9 @@
         "explanation": "While the application takes text input, displaying images based on search terms is primarily a computer vision/image retrieval task, not an NLP workload."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 31,
@@ -794,7 +850,9 @@
         "explanation": "A password reset form is not an NLP workload - it's a simple data collection and processing task that doesn't require understanding natural language."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 32,
@@ -821,7 +879,9 @@
         "explanation": "Translation service converts text from one language to another, which is exactly what's needed to present reviews in users' respective languages."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 33,
@@ -848,7 +908,9 @@
         "explanation": "While image analysis is general, facial detection and recognition specifically are needed for staff entry authorization."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 34,
@@ -875,7 +937,9 @@
         "explanation": "This matching is incorrect. The definitions are reversed for Classification and Regression."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 35,
@@ -902,7 +966,9 @@
         "explanation": "Forecasting is about predicting future values, not processing interactive questions."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 36,
@@ -929,7 +995,9 @@
         "explanation": "Language modeling predicts sequences of words, not the specific type needed for entity extraction and order processing."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 37,
@@ -959,8 +1027,7 @@
     "correct_answer": [
       "a",
       "b"
-    ],
-    "question_type": "multiple_select"
+    ]
   },
   {
     "question_id": 38,
@@ -987,7 +1054,9 @@
         "explanation": "Image classification is a computer vision task, not an NLP task."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 39,
@@ -1014,7 +1083,9 @@
         "explanation": "OCR is the correct solution as it extracts text from scanned documents and receipts, allowing data to be stored digitally."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 40,
@@ -1041,7 +1112,9 @@
         "explanation": "Classification categorizes images, but object detection is needed to identify the location of items within images."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 41,
@@ -1068,7 +1141,9 @@
         "explanation": "Feature selection is a separate task, not the function of the Split Data module."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 42,
@@ -1085,7 +1160,9 @@
         "explanation": "This is incorrect. Smart speakers and voice assistants that understand and respond to natural language questions are indeed examples of conversational AI."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 43,
@@ -1102,7 +1179,9 @@
         "explanation": "This is incorrect. Azure Bot Service is a service designed for building and deploying bots, including webchat features on websites."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 44,
@@ -1119,7 +1198,9 @@
         "explanation": "This is correct. Caption generation is not conversational AI. Conversational AI involves interactive dialogue between a user and an AI system."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 45,
@@ -1146,7 +1227,9 @@
         "explanation": "Computer Vision has built-in brand detection capabilities for identifying well-known brands in images as a pre-built solution."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 46,
@@ -1173,7 +1256,9 @@
         "explanation": "Incorrect. Face doesn't identify generic objects, and Custom Vision doesn't specialize in identifying people."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 47,
@@ -1200,7 +1285,9 @@
         "explanation": "Azure Cognitive Services provides AI capabilities but is not designed as a SIEM solution."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 48,
@@ -1227,7 +1314,9 @@
         "explanation": "Entity recognition identifies named entities, not the emotional tone of text."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 49,
@@ -1249,7 +1338,9 @@
         "explanation": "Classification predicts categorical outcomes (in this case, will be repaid or will not be repaid), which is appropriate for loan prediction."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 50,
@@ -1276,7 +1367,9 @@
         "explanation": "Provisioning an inference cluster is for deploying models, not tracking versions."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 51,
@@ -1303,7 +1396,9 @@
         "explanation": "Evaluating on the training data leads to overfitting; you must evaluate on the testing data."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 52,
@@ -1320,7 +1415,9 @@
         "explanation": "This is incorrect. Grouping documents based on usage statistics is indeed an example of clustering."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 53,
@@ -1337,7 +1434,9 @@
         "explanation": "Incorrect. This statement accurately describes clustering."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 54,
@@ -1354,7 +1453,9 @@
         "explanation": "Correct. This is an example of classification, not clustering, because we're predicting predefined categories (mild, moderate, severe) based on input features."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 55,
@@ -1386,7 +1487,9 @@
         "explanation": "This is step 1 in the correct sequence."
       }
     },
-    "correct_answer": "e"
+    "correct_answer": [
+      "e"
+    ]
   },
   {
     "question_id": 56,
@@ -1413,7 +1516,9 @@
         "explanation": "Incorrect order. You must split before training."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 57,
@@ -1435,7 +1540,9 @@
         "explanation": "Correct. In machine learning, input features are called variables or features."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 58,
@@ -1462,7 +1569,9 @@
         "explanation": "While NLP is part of chatbot technology, chatbot is the more complete solution for multi-channel support."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 59,
@@ -1484,7 +1593,9 @@
         "explanation": "While notebooks are useful, they are not required to run a pipeline in designer."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 60,
@@ -1511,7 +1622,9 @@
         "explanation": "OCR is used to extract text from images, not identify multiple types of items."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 61,
@@ -1528,7 +1641,9 @@
         "explanation": "Incorrect. Webchat bots are designed to interact with website visitors."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 62,
@@ -1545,7 +1660,9 @@
         "explanation": "Incorrect. Caption generation is indeed an NLP application."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 63,
@@ -1562,7 +1679,9 @@
         "explanation": "Incorrect. This is indeed an NLP application."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 64,
@@ -1589,7 +1708,9 @@
         "explanation": "Video analyzer is for video analysis, not training custom object detection models."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 65,
@@ -1611,7 +1732,9 @@
         "explanation": "Facial recognition identifies who a person is, not image quality feedback."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 66,
@@ -1633,7 +1756,9 @@
         "explanation": "Correct. Predicting a numeric value (number of vehicles) is a regression task."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 67,
@@ -1650,7 +1775,9 @@
         "explanation": "Incorrect. Many chatbots do support voice input."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 68,
@@ -1667,7 +1794,9 @@
         "explanation": "Correct. A single chatbot solution can manage conversations across multiple channels (email, phone, live chat, etc.)."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 69,
@@ -1684,7 +1813,9 @@
         "explanation": "Incorrect. This accurately describes how chatbots manage conversations."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 70,
@@ -1711,7 +1842,9 @@
         "explanation": "Correct. This technique analyzes temporal data patterns and identifies anomalies or unusual changes."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 71,
@@ -1738,7 +1871,9 @@
         "explanation": "Incorrect. Regularization is a technique to prevent overfitting, not for customer segmentation."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 72,
@@ -1765,7 +1900,9 @@
         "explanation": "Incorrect. You must load and prepare data before creating any model."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 73,
@@ -1792,7 +1929,9 @@
         "explanation": "Incorrect. A random sample may not be representative and could introduce sampling bias."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 74,
@@ -1819,7 +1958,9 @@
         "explanation": "Correct. Gender bias violates the fairness principle of responsible AI, which requires equitable treatment across all demographic groups."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 75,
@@ -1846,7 +1987,9 @@
         "explanation": "Incorrect. The functions are incorrectly assigned to the tools."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 76,
@@ -1873,7 +2016,9 @@
         "explanation": "Incorrect. Model type selection comes before training and validation."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 77,
@@ -1900,7 +2045,9 @@
         "explanation": "Incorrect. While Computer Vision can analyze images, Custom Vision is the appropriate service for custom labeling of personal photos."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 78,
@@ -1927,7 +2074,9 @@
         "explanation": "Incorrect. The service functions are not properly matched."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 79,
@@ -1954,7 +2103,9 @@
         "explanation": "Incorrect. While transparency matters, the core issue is privacy violation."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 80,
@@ -1981,7 +2132,9 @@
         "explanation": "Incorrect. Classification predicts categories, not numeric values."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 81,
@@ -2008,11 +2161,12 @@
         "explanation": "Incorrect. While transparency is important, this is primarily about reliability."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 82,
-    "question_type": "multiple_select",
     "question_text": "You need to reduce the load on telephone operators by implementing a chatbot to answer simple questions with predefined answers. Which two AI services should you use to achieve the goal?",
     "options": {
       "a": {
@@ -2056,7 +2210,9 @@
         "explanation": "Correct. Chatbots can be built using various tools including Azure Bot Service which supports no-code and low-code approaches."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 84,
@@ -2073,7 +2229,9 @@
         "explanation": "Incorrect. Azure Bot Service is specifically designed to provide services for hosting conversational bots."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 85,
@@ -2090,7 +2248,9 @@
         "explanation": "Incorrect. Azure Bot Service does support Microsoft Teams channel integration."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 86,
@@ -2117,11 +2277,12 @@
         "explanation": "Incorrect. Generating RMA numbers requires database integration beyond FAQ capabilities."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 87,
-    "question_type": "multiple_select",
     "question_text": "Which two scenarios are examples of a conversational AI workload?",
     "options": {
       "a": {
@@ -2175,7 +2336,9 @@
         "explanation": "Correct. A webchat bot embedded in a website that answers user questions in real-time is the definition of a webchat bot."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 89,
@@ -2202,7 +2365,9 @@
         "explanation": "Face service is used for facial recognition and analysis, not for web-based customer support."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 90,
@@ -2219,7 +2384,9 @@
         "explanation": "Incorrect. This is a conversational AI workload as it involves a bot responding to user queries in an interactive manner."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 91,
@@ -2236,7 +2403,9 @@
         "explanation": "Correct. This is not a conversational AI workload. It's an image retrieval/search application, as there's no conversational interaction involved."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 92,
@@ -2253,7 +2422,9 @@
         "explanation": "Correct. A password reset form is not a conversational AI workload. It's a standard web form without conversational interaction."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 93,
@@ -2275,7 +2446,9 @@
         "explanation": "Classification is used to assign rows to predefined categories, not to identify groups of similar values."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 94,
@@ -2302,7 +2475,9 @@
         "explanation": "While business interests matter, responsible AI prioritizes fairness and user trust over company interests alone."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 95,
@@ -2329,7 +2504,9 @@
         "explanation": "This combination misses critical principles like Accountability and Fairness needed for the stated requirements."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 96,
@@ -2346,7 +2523,9 @@
         "explanation": "Incorrect. These services can indeed be integrated together."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 97,
@@ -2363,7 +2542,9 @@
         "explanation": "Incorrect. Conversational engagement is a core feature of Azure Bot Service."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 98,
@@ -2380,7 +2561,9 @@
         "explanation": "Incorrect. FAQ import is a supported feature of Azure Bot Service."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 99,
@@ -2407,7 +2590,9 @@
         "explanation": "Correct. OCR is the technology that converts scanned documents and newspaper articles into digitized, searchable text."
       }
     },
-    "correct_answer": "d"
+    "correct_answer": [
+      "d"
+    ]
   },
   {
     "question_id": 100,
@@ -2434,7 +2619,9 @@
         "explanation": "While some match, Key phrase extraction doesn't align with the entity extraction scenario specified."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 101,
@@ -2461,7 +2648,9 @@
         "explanation": "Content Safety is designed for content moderation, not for audio synthesis."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 102,
@@ -2483,7 +2672,9 @@
         "explanation": "Entities are specific pieces of information within utterances, like 'main stage' or 'act', not the full question."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 103,
@@ -2500,7 +2691,9 @@
         "explanation": "Incorrect. Language identification is a supported feature of Azure Language Service."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 104,
@@ -2517,7 +2710,9 @@
         "explanation": "Correct. Azure Language Service cannot detect handwritten signatures. This would require Computer Vision or Document Intelligence services."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 105,
@@ -2534,7 +2729,9 @@
         "explanation": "Incorrect. Azure Language Service can identify named entities including organizations and companies."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 106,
@@ -2561,7 +2758,9 @@
         "explanation": "Computer vision processes images, not text documents."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 107,
@@ -2588,11 +2787,12 @@
         "explanation": "This is a translation task, not key phrase extraction."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 108,
-    "question_type": "multiple_select",
     "question_text": "In which two scenarios can you use a speech synthesis solution?",
     "options": {
       "a": {
@@ -2646,11 +2846,12 @@
         "explanation": "Language understanding is for processing text, not analyzing images."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 110,
-    "question_type": "multiple_select",
     "question_text": "You have an AI solution that provides users with the ability to control smart devices by using verbal commands. Which two types of natural language processing (NLP) workloads does the solution use?",
     "options": {
       "a": {
@@ -2699,7 +2900,9 @@
         "explanation": "Chatbots are well-suited for automating reservation processes, so this statement is true."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 112,
@@ -2716,7 +2919,9 @@
         "explanation": "Answering questions about business hours is a perfect use case for chatbots, so this statement is true."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 113,
@@ -2733,7 +2938,9 @@
         "explanation": "Chatbots can definitely automate responses to customer reviews on external websites, so this statement is true."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 114,
@@ -2760,7 +2967,9 @@
         "explanation": "Translation converts between languages, but this scenario is about converting speech to text in the same language."
       }
     },
-    "correct_answer": "b"
+    "correct_answer": [
+      "b"
+    ]
   },
   {
     "question_id": 115,
@@ -2787,11 +2996,12 @@
         "explanation": "Suggesting responses to email requires natural language processing, not vision capabilities."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 116,
-    "question_type": "multiple_select",
     "question_text": "Which two scenarios are examples of a natural language processing workload?",
     "options": {
       "a": {
@@ -2835,7 +3045,9 @@
         "explanation": "Object detection is specifically designed to identify and locate objects in images, so this statement is true."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 118,
@@ -2852,7 +3064,9 @@
         "explanation": "Object detection is designed to handle multiple instances of objects, so this statement is true."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 119,
@@ -2869,7 +3083,9 @@
         "explanation": "Object detection can handle multiple object types, so this statement is true."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   },
   {
     "question_id": 120,
@@ -2896,7 +3112,9 @@
         "explanation": "Language service processes text content but is not optimized for extracting structured data from scanned documents."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 121,
@@ -2923,7 +3141,9 @@
         "explanation": "Image-type detection identifies the type of image, not generates captions."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 122,
@@ -2950,7 +3170,9 @@
         "explanation": "This is a regression problem (predicting a continuous numeric value), not a classification problem."
       }
     },
-    "correct_answer": "c"
+    "correct_answer": [
+      "c"
+    ]
   },
   {
     "question_id": 123,
@@ -2977,6 +3199,8 @@
         "explanation": "The designer is a visual, no-code interface. For code-first experiences, you would use notebooks."
       }
     },
-    "correct_answer": "a"
+    "correct_answer": [
+      "a"
+    ]
   }
 ]

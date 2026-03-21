@@ -9,12 +9,11 @@ const optionInputSchema = z.object({
 const questionInputSchema = z.object({
   questionId: z.number().int().positive(),
   questionText: z.string().min(1),
-  questionType: z.enum(["single_select", "multiple_select"]).default("single_select"),
   options: z.record(z.string().regex(/^[a-z]$/), optionInputSchema).refine(
     (opts) => Object.keys(opts).length >= 2,
     { message: "At least 2 options required" },
   ),
-  correctAnswer: z.union([z.string(), z.array(z.string())]),
+  correctAnswer: z.array(z.string()).min(1),
 });
 
 export const createQuizSchema = z.object({

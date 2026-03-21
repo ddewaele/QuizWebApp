@@ -55,10 +55,9 @@ model QuizQuestion {
   id           String @id @default(cuid())
   quizId       String
   quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  questionId   Int
-  questionText String
-  questionType String @default("single_select")
-  options      Json
+  questionId    Int
+  questionText  String
+  options       Json
   correctAnswer Json
   sortOrder    Int
 
