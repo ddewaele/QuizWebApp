@@ -10,6 +10,10 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
+        configure: (proxy) => {
+          // Suppress ECONNREFUSED logs — expected when backend isn't running (e.g. CI)
+          proxy.on('error', () => {});
+        },
       },
     },
     watch: {
