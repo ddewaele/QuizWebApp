@@ -9,7 +9,9 @@ export default defineConfig({
   reporter: "html",
   use: {
     baseURL: "http://localhost:5174",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
+    screenshot: "on",
+    video: "retain-on-failure",
     launchOptions: {
       slowMo: process.env.SLOW_MO ? parseInt(process.env.SLOW_MO) : 0,
     },
