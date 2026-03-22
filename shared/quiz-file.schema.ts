@@ -3,6 +3,9 @@ import { z } from "zod";
 /**
  * Zod schemas for the quiz JSON import/export format.
  *
+ * File structure:
+ *   { "meta": { "title": "...", ... }, "questions": [...] }
+ *
  * correct_answer is always a string[] — single-select questions have one element,
  * multiple-select questions have two or more. question_type is not part of the format;
  * it is derived from correct_answer.length.
@@ -17,6 +20,15 @@ export const optionSchema = z.object({
 export type QuizFileOption = z.infer<typeof optionSchema>;
 
 const optionKeyPattern = /^[a-z]$/;
+
+export const quizMetaSchema = z.object({
+  title: z.string().min(1, "meta.title is required"),
+  subject: z.string().optional(),
+  version: z.string().optional(),
+  created: z.string().optional(),
+});
+
+export type QuizFileMeta = z.infer<typeof quizMetaSchema>;
 
 export const questionSchema = z
   .object({
@@ -33,6 +45,9 @@ export const questionSchema = z
       }
     ),
     correct_answer: z.array(z.string()).min(1, "At least one correct answer is required"),
+    difficulty: z.enum(["easy", "medium", "hard"]).optional(),
+    topic: z.string().optional(),
+    tags: z.array(z.string()).optional(),
   })
   .superRefine((q, ctx) => {
     const optionKeys = Object.keys(q.options);
@@ -62,14 +77,18 @@ export const questionSchema = z
 export type QuizFileQuestion = z.infer<typeof questionSchema>;
 
 export const quizFileSchema = z
-  .array(questionSchema)
-  .min(1, "Quiz must have at least one question")
-  .refine(
-    (questions) => {
-      const ids = questions.map((q) => q.question_id);
-      return new Set(ids).size === ids.length;
-    },
-    { message: "Duplicate question_id values found" }
-  );
+  .object({
+    meta: quizMetaSchema,
+    questions: z
+      .array(questionSchema)
+      .min(1, "Quiz must have at least one question")
+      .refine(
+        (questions) => {
+          const ids = questions.map((q) => q.question_id);
+          return new Set(ids).size === ids.length;
+        },
+        { message: "Duplicate question_id values found" }
+      ),
+  });
 
 export type QuizFile = z.infer<typeof quizFileSchema>;

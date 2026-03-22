@@ -35,12 +35,15 @@ model AuthAccount {
 }
 
 model Quiz {
-  id          String  @id @default(cuid())
-  title       String
-  description String?
-  userId      String
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sourceJson  Json?
+  id            String  @id @default(cuid())
+  title         String
+  description   String?
+  subject       String?
+  metaVersion   String?
+  metaCreated   String?
+  userId        String
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceJson    Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -52,14 +55,17 @@ model Quiz {
 }
 
 model QuizQuestion {
-  id           String @id @default(cuid())
-  quizId       String
-  quiz         Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  id            String  @id @default(cuid())
+  quizId        String
+  quiz          Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
   questionId    Int
   questionText  String
   options       Json
   correctAnswer Json
-  sortOrder    Int
+  sortOrder     Int
+  difficulty    String?
+  topic         String?
+  tags          Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

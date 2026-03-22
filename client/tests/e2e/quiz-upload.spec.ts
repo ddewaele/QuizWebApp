@@ -45,28 +45,34 @@ const UPLOADED_QUIZ = {
   _count: { questions: 2, attempts: 0 },
 };
 
-/** Create a temporary JSON quiz file on disk for the upload test. */
+/** Create a temporary JSON quiz file on disk for the upload test (new format). */
 function createTempQuizFile(): string {
-  const content = JSON.stringify([
-    {
-      question_id: 1,
-      question_text: "What is the capital of France?",
-      options: {
-        a: { text: "Berlin", is_true: false, explanation: "That's Germany." },
-        b: { text: "Paris", is_true: true, explanation: "Correct!" },
-      },
-      correct_answer: ["b"],
+  const content = JSON.stringify({
+    meta: {
+      title: "My Uploaded Quiz",
+      subject: "Geography",
     },
-    {
-      question_id: 2,
-      question_text: "What is the capital of Japan?",
-      options: {
-        a: { text: "Tokyo", is_true: true, explanation: "Correct!" },
-        b: { text: "Osaka", is_true: false, explanation: "That's not the capital." },
+    questions: [
+      {
+        question_id: 1,
+        question_text: "What is the capital of France?",
+        options: {
+          a: { text: "Berlin", is_true: false, explanation: "That's Germany." },
+          b: { text: "Paris", is_true: true, explanation: "Correct!" },
+        },
+        correct_answer: ["b"],
       },
-      correct_answer: ["a"],
-    },
-  ]);
+      {
+        question_id: 2,
+        question_text: "What is the capital of Japan?",
+        options: {
+          a: { text: "Tokyo", is_true: true, explanation: "Correct!" },
+          b: { text: "Osaka", is_true: false, explanation: "That's not the capital." },
+        },
+        correct_answer: ["a"],
+      },
+    ],
+  });
 
   const tmpPath = path.join(os.tmpdir(), "test-quiz.json");
   fs.writeFileSync(tmpPath, content, "utf-8");
@@ -105,14 +111,13 @@ test.describe("Upload quiz via JSON", () => {
 
     await expect(page.getByRole("heading", { name: "Upload Quiz" })).toBeVisible();
 
-    // Fill in the title (label has no htmlFor, use placeholder)
-    await page.getByPlaceholder("My Quiz").fill("My Uploaded Quiz");
-
-    // Upload the file
+    // Upload the file — title now comes from meta.title in the JSON
     await page.locator('input[type="file"]').setInputFiles(tmpQuizFile);
 
-    // File should be accepted
+    // File should be accepted and meta preview shown
     await expect(page.getByText("Valid JSON file")).toBeVisible();
+    await expect(page.getByText("My Uploaded Quiz")).toBeVisible();
+    await expect(page.getByText("Geography")).toBeVisible();
 
     // Submit
     await page.getByRole("button", { name: "Upload Quiz" }).click();
