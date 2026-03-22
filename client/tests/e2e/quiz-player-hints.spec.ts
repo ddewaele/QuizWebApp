@@ -68,21 +68,21 @@ test.describe("Quiz player — Check Answer and Show Hints", () => {
     await expect(page.getByText("Paris is the capital of France.")).toBeVisible();
   });
 
-  test("Check Answer shows incorrect result and reveals correct answer for a wrong selection", async ({
+  test("Check Answer shows incorrect result for a wrong selection", async ({
     page,
   }) => {
     // Select wrong answer (A — London)
     await page.getByRole("button", { name: /A\.\s*London/ }).click();
     await page.getByRole("button", { name: "Check Answer" }).click();
 
-    // Incorrect banner visible and correct answer identified
+    // Incorrect banner visible
     await expect(page.getByText(/Incorrect/)).toBeVisible();
-    await expect(page.getByText(/correct answer is/i)).toBeVisible();
-    await expect(page.locator("span.font-bold", { hasText: "B" })).toBeVisible();
 
-    // Explanations for all options are shown
+    // Only the selected option's explanation is shown
     await expect(page.getByText("London is the capital of England.")).toBeVisible();
-    await expect(page.getByText("Paris is the capital of France.")).toBeVisible();
+    // Unselected options' explanations are NOT shown
+    await expect(page.getByText("Paris is the capital of France.")).not.toBeVisible();
+    await expect(page.getByText("Berlin is the capital of Germany.")).not.toBeVisible();
   });
 
   test("Hide Answer button collapses the result and explanations", async ({ page }) => {

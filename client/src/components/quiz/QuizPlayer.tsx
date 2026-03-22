@@ -92,18 +92,10 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
   const getOptionStyle = (key: string, isTrue: boolean) => {
     const isSelected = selectedKeys.includes(key);
 
-    if (isChecked) {
-      if (isTrue && isSelected) {
-        return "border-green-500 bg-green-50 text-green-900";
-      }
-      if (isTrue && !isSelected) {
-        // Correct answer the user missed
-        return "border-amber-400 bg-amber-50 text-amber-900";
-      }
-      if (!isTrue && isSelected) {
-        return "border-red-400 bg-red-50 text-red-900";
-      }
-      return "border-gray-200 text-gray-500";
+    if (isChecked && isSelected) {
+      return isTrue
+        ? "border-green-500 bg-green-50 text-green-900"
+        : "border-red-400 bg-red-50 text-red-900";
     }
 
     if (isSelected) {
@@ -153,7 +145,14 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
         <div className="space-y-2 ml-11">
           {Object.entries(question.options).map(([key, opt]) => {
             const isSelected = selectedKeys.includes(key);
-            const showExplanation = isChecked || isHinted;
+            const showBadge = isHinted || (isChecked && isSelected);
+            const showExplanation = isHinted || (isChecked && isSelected);
+
+            const badge = isHinted
+              ? { label: opt.is_true ? "✓ Correct" : "✗ Wrong", className: opt.is_true ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700" }
+              : isChecked && isSelected
+                ? { label: opt.is_true ? "✓ Correct" : "✗ Wrong", className: opt.is_true ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700" }
+                : null;
 
             return (
               <button
@@ -167,22 +166,9 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
                     <span className="font-medium mr-2">{key.toUpperCase()}.</span>
                     {opt.text}
                   </span>
-                  {isHinted && !isChecked && (
-                    <span className={`flex-shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded ${opt.is_true ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                      {opt.is_true ? "✓ Correct" : "✗ Wrong"}
-                    </span>
-                  )}
-                  {isChecked && (
-                    <span className={`flex-shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded ${
-                      opt.is_true && isSelected ? "bg-green-100 text-green-700"
-                      : opt.is_true && !isSelected ? "bg-amber-100 text-amber-700"
-                      : !opt.is_true && isSelected ? "bg-red-100 text-red-700"
-                      : "bg-gray-100 text-gray-500"
-                    }`}>
-                      {opt.is_true && isSelected ? "✓ Correct"
-                       : opt.is_true && !isSelected ? "Missed"
-                       : !opt.is_true && isSelected ? "✗ Wrong"
-                       : ""}
+                  {showBadge && badge && (
+                    <span className={`flex-shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded ${badge.className}`}>
+                      {badge.label}
                     </span>
                   )}
                 </div>
@@ -209,10 +195,7 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
             ) : (
               <>
                 <span className="text-lg">✗</span>
-                Incorrect. The correct answer{question.correctAnswer.length > 1 ? "s are" : " is"}{" "}
-                <span className="font-bold">
-                  {question.correctAnswer.map((k) => k.toUpperCase()).join(", ")}
-                </span>.
+                Incorrect. Try again or use Show Hints to see the correct answer.
               </>
             )}
           </div>
