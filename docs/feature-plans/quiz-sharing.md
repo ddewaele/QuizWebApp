@@ -65,12 +65,7 @@ model QuizShare {
   quizId    String
   quiz      Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
-  // Set when sharing with an existing user
-  userId    String?
-  user      User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Set when sharing with someone not yet on the platform
-  email     String
+  email     String          // Recipient email — the only identifier needed
 
   accessLevel QuizAccessLevel @default(TAKER)
   status      ShareStatus     @default(PENDING)
@@ -82,7 +77,6 @@ model QuizShare {
 
   @@unique([quizId, email])  // One share per email per quiz
   @@index([quizId])
-  @@index([userId])
   @@index([email])
   @@index([token])
 }
@@ -114,11 +108,10 @@ model User {
   accounts     AuthAccount[]
   quizzes      Quiz[]
   attempts     QuizAttempt[]
-  sharedQuizzes QuizShare[]  // Quizzes shared with this user
 }
 ```
 
-The `displayName` field is optional and separate from `name` (which comes from Google). This prepares for a future user profile page without blocking the sharing feature.
+The `displayName` field is optional and separate from `name` (which comes from Google). Prepares for a future profile page. No direct relation to `QuizShare` — access is resolved by matching `User.email` to `QuizShare.email`.
 
 ### Quiz Model Updates
 
@@ -133,34 +126,20 @@ model Quiz {
 
 ## Sharing Flow
 
-### Happy Path: Share with an Existing User
+Sharing is always by email address. The server does not look up whether the recipient is already on the platform — it simply creates a share record and sends an email. Whether the recipient is a new or existing user is irrelevant to the owner.
+
+### Happy Path
 
 ```
 Owner clicks "Share" on quiz
-  → Enters recipient's email
+  → Enters recipient's email address
   → POST /api/quizzes/:id/shares { email, accessLevel }
-  → Server looks up User by email
-  → If found: creates QuizShare with userId, status=PENDING
+  → Server creates QuizShare with email, status=PENDING
   → Sends email via Resend with invitation link
-  → Recipient clicks link → /quiz/:id/shared?token=xxx
-  → Server validates token, sets status=ACCEPTED
-  → Recipient can now take the quiz
-```
-
-### Happy Path: Share with a Non-User
-
-```
-Owner clicks "Share" on quiz
-  → Enters recipient's email (not on platform)
-  → POST /api/quizzes/:id/shares { email, accessLevel }
-  → Server finds no User with that email
-  → Creates QuizShare with userId=null, status=PENDING
-  → Sends email with invitation link
-  → Recipient clicks link → /quiz/:id/shared?token=xxx
-  → Not logged in → redirected to Google OAuth with returnUrl
-  → After OAuth, new User is created (existing flow)
-  → Server matches User.email to QuizShare.email
-  → Sets QuizShare.userId, status=ACCEPTED
+  → Recipient clicks link → /share/accept?token=xxx
+  → If not logged in → redirected to Google OAuth with returnUrl
+  → After OAuth, server matches User.email to QuizShare.email
+  → Sets status=ACCEPTED
   → Recipient can now take the quiz
 ```
 
@@ -201,7 +180,7 @@ findOwnedQuiz(quizId, userId)
 // New — owner OR shared access (for viewing, taking)
 findAccessibleQuiz(quizId, userId)
   → Check ownership first
-  → If not owner, check QuizShare where quizId + userId + status=ACCEPTED
+  → If not owner, look up user's email, then check QuizShare where quizId + email + status=ACCEPTED
   → Return quiz with accessLevel metadata
 ```
 
@@ -235,39 +214,24 @@ New TanStack Query hooks in `client/src/api/sharing.ts`:
 
 ## Email Templates
 
-Two email templates needed (can use React Email with Resend, or simple HTML):
-
-### 1. Quiz Invitation (recipient is already a user)
+One email template — the same regardless of whether the recipient is on the platform:
 
 ```
 Subject: {ownerName} shared a quiz with you: "{quizTitle}"
 
-Hi {recipientName},
-
-{ownerName} has shared the quiz "{quizTitle}" with you.
-
-[Take Quiz →]  (link to /quiz/:id/shared?token=xxx)
-
----
-QuizWebApp
-```
-
-### 2. Quiz Invitation (recipient is not on the platform)
-
-```
-Subject: {ownerName} invited you to take a quiz: "{quizTitle}"
-
 Hi,
 
-{ownerName} has invited you to take the quiz "{quizTitle}" on QuizWebApp.
+{ownerName} has shared the quiz "{quizTitle}" with you on QuizWebApp.
 
-Click below to sign up (via Google) and start the quiz:
+Click below to take the quiz:
 
-[Accept Invitation →]  (link to /quiz/:id/shared?token=xxx)
+[Take Quiz →]  (link to /share/accept?token=xxx)
 
 ---
 QuizWebApp
 ```
+
+The link handles everything — if the user isn't logged in, they'll be prompted to sign in (via Google OAuth) before being redirected to the quiz.
 
 ---
 
