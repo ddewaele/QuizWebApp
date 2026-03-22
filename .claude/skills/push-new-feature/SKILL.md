@@ -86,11 +86,12 @@ Use `gh pr create` with:
 
 ## Phase 6 — Wait for CI checks
 
-After the PR is created, run the CI watch command **in the background** using `run_in_background: true` so the user can continue working:
+After the PR is created, wait 15 seconds for GitHub to register the checks, then run the CI watch using `gh run watch` (not `gh pr checks --watch`) **in the background** using `run_in_background: true`:
 
-```
-gh pr checks <pr-number> --watch
-```
+1. Get the run ID: `gh pr checks <pr-number>` — extract the run URL and parse the run ID from it
+2. Then: `gh run watch <run-id>`
+
+Using `gh run watch` instead of `gh pr checks --watch` avoids the "no checks reported" race condition.
 
 Inform the user that CI is running in the background and they will be notified when it completes.
 
