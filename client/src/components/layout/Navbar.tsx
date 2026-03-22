@@ -38,6 +38,7 @@ export function Navbar() {
                     src={user.avatarUrl}
                     alt=""
                     className="w-8 h-8 rounded-full"
+                    referrerPolicy="no-referrer"
                   />
                 )}
                 <span className="text-sm text-gray-700">
