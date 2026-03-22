@@ -146,7 +146,17 @@ The app will be available at `http://localhost:5174`. The Vite dev server proxie
 
 The app deploys as a **single Railway service**. Fastify serves both the API and the built React SPA — no separate frontend service needed.
 
-#### Automated setup (recommended)
+#### One-click deploy
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/kKmqU-?referralCode=dD_tWh&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
+Clicking the button opens Railway's deployment wizard. It provisions the app and a PostgreSQL database, auto-generates `SESSION_SECRET`, and prompts you for `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `ANTHROPIC_API_KEY`. `DATABASE_URL` and `CLIENT_URL` are wired automatically.
+
+After deploying, add your Railway domain to your [Google OAuth client](https://console.cloud.google.com/apis/credentials):
+- **Authorised JavaScript origins:** `https://your-app.up.railway.app`
+- **Authorised redirect URIs:** `https://your-app.up.railway.app/api/auth/google/callback`
+
+#### CLI setup (alternative)
 
 A setup script handles project creation, PostgreSQL provisioning, environment variables, and the first deploy in one go.
 
