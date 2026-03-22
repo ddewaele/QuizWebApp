@@ -12,5 +12,8 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    watch: {
+      ignored: ['**/playwright-report/**', '**/test-results/**'],
+    },
   },
 })
