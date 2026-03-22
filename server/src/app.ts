@@ -34,7 +34,7 @@ export async function buildApp(config: Env) {
   await fastify.register(authRoutes, { config });
   await fastify.register(quizRoutes);
   await fastify.register(attemptRoutes);
-  await fastify.register(sharingRoutes);
+  await fastify.register(sharingRoutes, { config });
 
   // Global error handler
   fastify.setErrorHandler((error: FastifyError & { details?: unknown }, _request, reply) => {

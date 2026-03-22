@@ -26,6 +26,12 @@ export function Navbar() {
             >
               Results
             </Link>
+            <Link
+              to="/shared"
+              className="text-sm text-gray-600 hover:text-gray-900"
+            >
+              Shared with me
+            </Link>
           </div>
         </div>
 
@@ -88,6 +94,13 @@ export function Navbar() {
             className="block text-sm text-gray-700 py-2"
           >
             Results
+          </Link>
+          <Link
+            to="/shared"
+            onClick={() => setMobileOpen(false)}
+            className="block text-sm text-gray-700 py-2"
+          >
+            Shared with me
           </Link>
           {user && (
             <div className="border-t border-gray-100 pt-2 mt-2">

@@ -11,6 +11,8 @@ import { TakeQuizPage } from "./pages/TakeQuizPage";
 import { ResultsPage } from "./pages/ResultsPage";
 import { ResultReviewPage } from "./pages/ResultReviewPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { SharedWithMePage } from "./pages/SharedWithMePage";
+import { AcceptSharePage } from "./pages/AcceptSharePage";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +34,8 @@ export const router = createBrowserRouter([
           { path: "/quizzes/:id/take", element: <TakeQuizPage /> },
           { path: "/results", element: <ResultsPage /> },
           { path: "/results/:id", element: <ResultReviewPage /> },
+          { path: "/shared", element: <SharedWithMePage /> },
+          { path: "/share/accept", element: <AcceptSharePage /> },
           { path: "*", element: <NotFoundPage /> },
         ],
       },

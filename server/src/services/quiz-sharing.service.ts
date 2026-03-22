@@ -1,9 +1,14 @@
 import type { PrismaClient } from "@prisma/client";
 import type { CreateShareInput, UpdateShareInput } from "../schemas/sharing.schema.js";
 import { NotFoundError, ForbiddenError, ValidationError } from "../utils/errors.js";
+import type { EmailService } from "./email.service.js";
 
 export class QuizSharingService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(
+    private prisma: PrismaClient,
+    private emailService?: EmailService,
+    private baseUrl?: string,
+  ) {}
 
   private async findOwnedQuiz(quizId: string, userId: string) {
     const quiz = await this.prisma.quiz.findUnique({ where: { id: quizId } });
@@ -27,8 +32,10 @@ export class QuizSharingService {
       throw new ValidationError("Quiz is already shared with this email");
     }
 
+    let share;
+
     if (existing && existing.status === "REVOKED") {
-      return this.prisma.quizShare.update({
+      share = await this.prisma.quizShare.update({
         where: { id: existing.id },
         data: {
           status: "PENDING",
@@ -37,15 +44,41 @@ export class QuizSharingService {
           acceptedAt: null,
         },
       });
+    } else {
+      share = await this.prisma.quizShare.create({
+        data: {
+          quizId,
+          email: input.email,
+          accessLevel: input.accessLevel,
+          sharedBy: userId,
+        },
+      });
     }
 
-    return this.prisma.quizShare.create({
-      data: {
-        quizId,
-        email: input.email,
-        accessLevel: input.accessLevel,
-        sharedBy: userId,
-      },
+    await this.sendShareInvitationEmail(share.token, quiz.title, userId, input.email);
+
+    return share;
+  }
+
+  private async sendShareInvitationEmail(
+    token: string,
+    quizTitle: string,
+    ownerUserId: string,
+    recipientEmail: string,
+  ): Promise<void> {
+    if (!this.emailService || !this.baseUrl) return;
+
+    const owner = await this.prisma.user.findUnique({
+      where: { id: ownerUserId },
+      select: { name: true, email: true },
+    });
+
+    await this.emailService.sendShareInvitation({
+      recipientEmail,
+      quizTitle,
+      ownerName: owner?.name ?? owner?.email ?? "Someone",
+      token,
+      baseUrl: this.baseUrl,
     });
   }
 

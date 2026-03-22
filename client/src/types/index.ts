@@ -49,6 +49,25 @@ export interface QuizAttempt {
   answers?: QuizAttemptAnswer[];
 }
 
+export interface QuizShare {
+  id: string;
+  quizId: string;
+  email: string;
+  accessLevel: "TAKER" | "VIEWER";
+  status: "PENDING" | "ACCEPTED" | "REVOKED";
+  token: string;
+  sharedBy: string;
+  sharedAt: string;
+  acceptedAt: string | null;
+}
+
+export interface SharedQuiz {
+  shareId: string;
+  accessLevel: "TAKER" | "VIEWER";
+  sharedAt: string;
+  quiz: Quiz;
+}
+
 export interface QuizAttemptAnswer {
   id: string;
   attemptId: string;

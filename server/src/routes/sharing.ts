@@ -1,11 +1,18 @@
 import type { FastifyInstance } from "fastify";
 import { requireAuth } from "../middleware/require-auth.js";
 import { QuizSharingService } from "../services/quiz-sharing.service.js";
+import { EmailService } from "../services/email.service.js";
 import { createShareSchema, updateShareSchema } from "../schemas/sharing.schema.js";
 import { ValidationError } from "../utils/errors.js";
+import type { Env } from "../config.js";
 
-export default async function sharingRoutes(fastify: FastifyInstance) {
-  const sharingService = new QuizSharingService(fastify.prisma);
+export default async function sharingRoutes(fastify: FastifyInstance, opts: { config: Env }) {
+  const { config } = opts;
+  const emailService = new EmailService({
+    apiKey: config.RESEND_API_KEY,
+    fromEmail: config.RESEND_FROM_EMAIL,
+  });
+  const sharingService = new QuizSharingService(fastify.prisma, emailService, config.CLIENT_URL);
 
   fastify.addHook("onRequest", requireAuth);
 
