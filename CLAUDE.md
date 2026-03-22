@@ -33,8 +33,16 @@ docker compose up -d     # Start PostgreSQL (port 5433)
 docker compose down      # Stop PostgreSQL
 ```
 
-### Custom skill
+### Custom skills
 - `/fresh-start` — Kill all dev processes, regenerate Prisma client, restart backend + frontend, verify health
+- `/start-new-feature` — Pull latest main, create a feature branch, commit everything, run E2E tests, push branch
+- `/push-new-feature` — Verify feature branch is clean and tested, create GitHub issue + PR, wait for CI (no auto-merge)
+
+## Git workflow
+
+- **Never commit directly to `main`** — all changes go via a `feature/<name>` or `bugfix/<name>` branch and PR
+- Use `/start-new-feature` to create a branch and `/push-new-feature` to open the PR
+- Every bugfix must: create a `bugfix/<name>` branch → GitHub issue (description, root cause, reproduction steps) → write a test that covers the fix → tests pass → PR referencing the issue (`Closes #N`)
 
 ## Architecture
 
