@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 import { quizFileSchema } from "../../../shared/quiz-file.schema.js";
 import { ValidationError } from "../utils/errors.js";
 
@@ -42,7 +42,7 @@ export class QuizImportService {
             sortOrder: index,
             difficulty: q.difficulty ?? null,
             topic: q.topic ?? null,
-            tags: q.tags ?? null,
+            tags: q.tags ?? Prisma.JsonNull,
           })),
         },
       },

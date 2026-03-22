@@ -1,0 +1,9 @@
+{
+  "name": "quizwebapp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm ci --prefix client && npm run build --prefix client && npm ci --prefix server && npm run build --prefix server",
+    "start": "npm run migrate:deploy --prefix server && npm run start --prefix server"
+  }
+}
