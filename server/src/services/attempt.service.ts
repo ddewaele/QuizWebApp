@@ -24,6 +24,7 @@ export class AttemptService {
           quizId,
           email: { equals: user.email, mode: "insensitive" },
           status: "ACCEPTED",
+          accessLevel: "TAKER",
         },
       });
       if (!hasAccess) throw new ForbiddenError();

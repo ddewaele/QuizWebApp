@@ -167,9 +167,10 @@ export class QuizSharingService {
 
     if (!quiz) throw new NotFoundError("Quiz");
 
-    const share = await this.prisma.quizShare.findUnique({
+    const share = await this.prisma.quizShare.findFirst({
       where: {
-        quizId_email: { quizId, email: userEmail },
+        quizId,
+        email: { equals: userEmail, mode: "insensitive" },
         status: "ACCEPTED",
       },
     });
