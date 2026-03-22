@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "SLOW_MO=1500 playwright test --headed"
+    "test:e2e:headed": "SLOW_MO=1500 playwright test --headed --workers=1"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
