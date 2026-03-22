@@ -209,11 +209,11 @@ After getting your Railway domain, add it to your [Google Cloud OAuth client](ht
 
 #### How the build works
 
-`nixpacks.toml` defines the pipeline Railway runs on every deploy:
+Railway uses **Railpack** for builds. It detects the project as Node.js via the root `package.json` + `package-lock.json` and runs the scripts defined there:
 
 1. **Install** — `npm ci` for both `client/` and `server/`
 2. **Build** — Vite builds the React app into `client/dist/`; `tsc` compiles the server; Prisma client is generated
-3. **Start** — `prisma migrate deploy` runs pending migrations, then `npm start` launches Fastify
+3. **Start** — `prisma migrate deploy` runs pending migrations, then `node dist/server/src/index.js` launches Fastify
 
 In production Fastify serves `client/dist/` as static files and falls back to `index.html` for all non-API routes, so React Router's client-side navigation works correctly.
 
