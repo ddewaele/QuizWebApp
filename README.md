@@ -140,6 +140,61 @@ cd client && npm run dev
 
 The app will be available at `http://localhost:5174`. The Vite dev server proxies `/api` requests to the Fastify backend on port 3000.
 
+## Deployment
+
+### Railway
+
+The app deploys as a **single Railway service**. Fastify serves both the API and the built React SPA — no separate frontend service needed.
+
+#### 1. Create the project
+
+- New Project → Deploy from GitHub repo → select this repository
+- Railway detects `nixpacks.toml` automatically and runs the full build pipeline
+
+#### 2. Add a PostgreSQL database
+
+- In the project dashboard → **Add Service → Database → PostgreSQL**
+- Railway injects `DATABASE_URL` into your service automatically
+
+#### 3. Set environment variables
+
+In the service's **Variables** tab, add:
+
+| Variable | Value |
+|----------|-------|
+| `NODE_ENV` | `production` |
+| `CLIENT_URL` | Your Railway domain, e.g. `https://quizwebapp.up.railway.app` |
+| `GOOGLE_CLIENT_ID` | Your Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Your Google OAuth client secret |
+| `SESSION_SECRET` | 64-char hex string (see generation command above) |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key (for AI quiz generation) |
+
+`DATABASE_URL` is injected automatically by the PostgreSQL add-on — do not set it manually.
+
+#### 4. Add the production redirect URI in Google Cloud Console
+
+- Go to **APIs & Services → Credentials → your OAuth client**
+- Under **Authorised redirect URIs**, add:
+  ```
+  https://your-railway-domain.up.railway.app/api/auth/google/callback
+  ```
+- Under **Authorised JavaScript origins**, add:
+  ```
+  https://your-railway-domain.up.railway.app
+  ```
+
+The `CLIENT_URL` env var is used to construct the OAuth callback URI, so once it matches your Railway domain the auth flow works without any code changes.
+
+#### How the build works
+
+`nixpacks.toml` defines the pipeline Railway runs on every deploy:
+
+1. **Install** — `npm ci` for both `client/` and `server/`
+2. **Build** — Vite builds the React app into `client/dist/`; `tsc` compiles the server; Prisma client is generated
+3. **Start** — `prisma migrate deploy` runs pending migrations, then `npm start` launches Fastify
+
+In production Fastify serves `client/dist/` as static files and falls back to `index.html` for all non-API routes, so React Router's client-side navigation works correctly.
+
 ## Quiz JSON Format
 
 Quizzes are imported/exported as a JSON array of question objects.
