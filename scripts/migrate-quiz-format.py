@@ -7,7 +7,7 @@ Old format:
 
 New format:
   {
-    "meta": { "title": "...", "subject": "..." },
+    "meta": { "title": "...", "subject": "...", "version": "0.0.1" },
     "questions": [ { "correct_answer": ["b"], ... }, ... ]
   }
 
@@ -81,6 +81,7 @@ def migrate_file(path: Path) -> bool:
         "meta": {
             "title": title,
             "subject": subject,
+            "version": "0.0.1",
         },
         "questions": questions,
     }

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { quizFileSchema } from "../../shared/quiz-file.schema";
 
-const VALID_META = { title: "Test Quiz" };
+const VALID_META = { title: "Test Quiz", version: "1.0.0" };
 
 function makeQuestion(overrides: Record<string, unknown> = {}) {
   return {
@@ -45,11 +45,25 @@ describe("Quiz file validation", () => {
     expect(result.success).toBe(true);
   });
 
-  it("accepts optional meta fields: subject, version, created", () => {
+  it("accepts optional meta fields: subject, created", () => {
     const result = quizFileSchema.safeParse(
-      makeQuizFile([makeQuestion()], { subject: "Azure", version: "1.0.0", created: "2025-01-01" }),
+      makeQuizFile([makeQuestion()], { subject: "Azure", created: "2025-01-01" }),
     );
     expect(result.success).toBe(true);
+  });
+
+  it("rejects missing meta.version", () => {
+    const result = quizFileSchema.safeParse(
+      makeQuizFile([makeQuestion()], { version: undefined }),
+    );
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects invalid semver in meta.version", () => {
+    const result = quizFileSchema.safeParse(
+      makeQuizFile([makeQuestion()], { version: "v1.0" }),
+    );
+    expect(result.success).toBe(false);
   });
 
   it("rejects missing meta block", () => {

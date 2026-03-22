@@ -51,6 +51,7 @@ function createTempQuizFile(): string {
     meta: {
       title: "My Uploaded Quiz",
       subject: "Geography",
+      version: "1.0.0",
     },
     questions: [
       {

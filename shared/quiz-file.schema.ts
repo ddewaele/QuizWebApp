@@ -21,10 +21,14 @@ export type QuizFileOption = z.infer<typeof optionSchema>;
 
 const optionKeyPattern = /^[a-z]$/;
 
+const semverPattern = /^\d+\.\d+\.\d+$/;
+
 export const quizMetaSchema = z.object({
   title: z.string().min(1, "meta.title is required"),
   subject: z.string().optional(),
-  version: z.string().optional(),
+  version: z
+    .string()
+    .regex(semverPattern, "meta.version must be a semantic version (e.g. 1.0.0)"),
   created: z.string().optional(),
 });
 
