@@ -67,10 +67,7 @@ export default async function quizRoutes(fastify: FastifyInstance) {
 
   // Import quiz from JSON
   fastify.post("/api/quizzes/import", async (request, reply) => {
-    const { title, content } = request.body as {
-      title?: string;
-      content?: string;
-    };
+    const { content } = request.body as { content?: string };
 
     if (!content) {
       return reply.status(400).send({
@@ -80,11 +77,7 @@ export default async function quizRoutes(fastify: FastifyInstance) {
     }
 
     try {
-      const quiz = await importService.importFromJson(
-        request.userId!,
-        title || "Imported Quiz",
-        content,
-      );
+      const quiz = await importService.importFromJson(request.userId!, content);
       return reply.status(201).send({ quiz });
     } catch (err) {
       if (err instanceof ValidationError) {

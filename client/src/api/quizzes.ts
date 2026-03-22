@@ -49,7 +49,7 @@ export function useDeleteQuiz() {
 export function useImportQuiz() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { title: string; content: string }) =>
+    mutationFn: (data: { content: string }) =>
       api.post<{ quiz: Quiz }>("/quizzes/import", data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["quizzes"] }),
   });

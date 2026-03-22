@@ -15,11 +15,11 @@ export function QuizUploadPage() {
     ValidationErrorDetail[]
   >([]);
 
-  const handleUpload = (title: string, content: string) => {
+  const handleUpload = (content: string) => {
     setServerError(null);
     setValidationErrors([]);
     importQuiz.mutate(
-      { title, content },
+      { content },
       {
         onSuccess: (data) => navigate(`/quizzes/${data.quiz.id}`),
         onError: (err: unknown) => {
@@ -51,9 +51,14 @@ export function QuizUploadPage() {
 
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Upload Quiz</h1>
       <p className="text-gray-600 mb-6">
-        Upload a quiz JSON file. The file must be a JSON array of question
-        objects with question_id, question_text, options, and correct_answer
-        fields.
+        Upload a quiz JSON file in the standard format:{" "}
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
+          {"{ meta: { title, version }, questions: [...] }"}
+        </code>
+        . The quiz title and subject are read from the file's{" "}
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">meta</code> block.{" "}
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">version</code> is required and must be a semantic version (e.g.{" "}
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">1.0.0</code>).
       </p>
 
       <div className="max-w-xl">
