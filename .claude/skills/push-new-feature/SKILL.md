@@ -86,13 +86,17 @@ Use `gh pr create` with:
 
 ## Phase 6 — Wait for CI checks
 
-After the PR is created, wait for the required status checks to complete:
+After the PR is created, run the CI watch command **in the background** using `run_in_background: true` so the user can continue working:
+
 ```
 gh pr checks <pr-number> --watch
 ```
 
-- If all checks pass: report success and show the PR URL. Tell the user the PR is ready to merge.
-- If any check fails: stop, show the failure output, and tell the user to fix the issue and push again.
+Inform the user that CI is running in the background and they will be notified when it completes.
+
+When the background task completes:
+- If all checks passed: report success and show the PR URL. Tell the user the PR is ready to merge.
+- If any check failed: show the failure output and tell the user to fix the issue and push again.
 
 Do NOT merge the PR — leave that to the user.
 
