@@ -12,7 +12,22 @@ export class AttemptService {
     });
 
     if (!quiz) throw new NotFoundError("Quiz");
-    if (quiz.userId !== userId) throw new ForbiddenError();
+
+    // Allow owner or shared users to submit attempts
+    if (quiz.userId !== userId) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { email: true },
+      });
+      const hasAccess = user && await this.prisma.quizShare.findFirst({
+        where: {
+          quizId,
+          email: { equals: user.email, mode: "insensitive" },
+          status: "ACCEPTED",
+        },
+      });
+      if (!hasAccess) throw new ForbiddenError();
+    }
 
     const questions = quiz.questions;
 

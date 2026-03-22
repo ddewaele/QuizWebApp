@@ -31,9 +31,28 @@ export class QuizService {
     });
 
     if (!quiz) throw new NotFoundError("Quiz");
-    if (quiz.userId !== userId) throw new ForbiddenError();
 
-    return quiz;
+    // Owner can always access
+    if (quiz.userId === userId) return quiz;
+
+    // Check shared access
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    if (user) {
+      const share = await this.prisma.quizShare.findFirst({
+        where: {
+          quizId: id,
+          email: { equals: user.email, mode: "insensitive" },
+          status: "ACCEPTED",
+        },
+      });
+      if (share) return quiz;
+    }
+
+    throw new ForbiddenError();
   }
 
   async create(userId: string, input: CreateQuizInput) {
