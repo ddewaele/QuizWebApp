@@ -17,7 +17,7 @@ export class QuizImportService {
     if (!result.success) {
       throw new ValidationError("Quiz file validation failed", {
         errors: result.error.issues.map((i) => ({
-          path: i.path.join("."),
+          path: i.path.map((s) => (typeof s === "number" ? s + 1 : s)).join("."),
           message: i.message,
         })),
       });
