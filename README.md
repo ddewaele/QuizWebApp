@@ -142,32 +142,11 @@ The app will be available at `http://localhost:5174`. The Vite dev server proxie
 
 ## Quiz JSON Format
 
-Quizzes are imported/exported as a JSON array of question objects. `correct_answer` is always an array — single-select questions have one element, multiple-select questions have two or more:
+Quizzes are imported/exported as a JSON array of question objects.
 
-```json
-[
-  {
-    "question_id": 1,
-    "question_text": "What is 2 + 2?",
-    "options": {
-      "a": { "text": "3", "is_true": false, "explanation": "Incorrect" },
-      "b": { "text": "4", "is_true": true, "explanation": "Correct!" },
-      "c": { "text": "5", "is_true": false, "explanation": "Incorrect" }
-    },
-    "correct_answer": ["b"]
-  },
-  {
-    "question_id": 2,
-    "question_text": "Which are prime?",
-    "options": {
-      "a": { "text": "2", "is_true": true, "explanation": "2 is prime" },
-      "b": { "text": "4", "is_true": false, "explanation": "4 = 2×2" },
-      "c": { "text": "7", "is_true": true, "explanation": "7 is prime" }
-    },
-    "correct_answer": ["a", "c"]
-  }
-]
-```
+The exact JSON format of a quiz file is defined by the `QuizFileSchema` in `server/src/schemas/quizFile.ts`. This schema uses Zod for validation and ensures that imported quiz files have the correct structure and data types.
+
+The format schema documentation can be found in [QUIZ-FORMAT.md](QUIZ-FORMAT.md).
 
 ## Running Tests
 

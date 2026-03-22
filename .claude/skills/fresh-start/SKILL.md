@@ -35,10 +35,11 @@ This ensures the Prisma client matches the current schema (avoids stale column e
 
 ### 4. Start the backend
 
-From `server/`, start the Fastify server in the background:
+From `server/`, start the Fastify server in watch mode in the background:
 ```
-npx tsx src/index.ts
+npx tsx watch src/index.ts
 ```
+Watch mode automatically restarts the server when source files change — no manual restart needed after code edits.
 Wait 3 seconds, then verify it responds on `http://localhost:3000/api/health`.
 
 ### 5. Start the frontend
