@@ -15,10 +15,11 @@ async function request<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const hasBody = options.body !== undefined;
   const res = await fetch(`${API_BASE}${path}`, {
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
       ...options.headers,
     },
     ...options,
