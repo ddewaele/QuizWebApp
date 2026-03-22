@@ -140,6 +140,83 @@ cd client && npm run dev
 
 The app will be available at `http://localhost:5174`. The Vite dev server proxies `/api` requests to the Fastify backend on port 3000.
 
+## Deployment
+
+### Railway
+
+The app deploys as a **single Railway service**. Fastify serves both the API and the built React SPA — no separate frontend service needed.
+
+#### One-click deploy
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/kKmqU-?referralCode=dD_tWh&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
+Clicking the button opens Railway's deployment wizard. It provisions the app and a PostgreSQL database, auto-generates `SESSION_SECRET`, and prompts you for `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `ANTHROPIC_API_KEY`. `DATABASE_URL` and `CLIENT_URL` are wired automatically.
+
+After deploying, add your Railway domain to your [Google OAuth client](https://console.cloud.google.com/apis/credentials):
+- **Authorised JavaScript origins:** `https://your-app.up.railway.app`
+- **Authorised redirect URIs:** `https://your-app.up.railway.app/api/auth/google/callback`
+
+#### CLI setup (alternative)
+
+A setup script handles project creation, PostgreSQL provisioning, environment variables, and the first deploy in one go.
+
+**Prerequisites:**
+
+```bash
+npm install -g @railway/cli
+railway login
+```
+
+**Run from the repo root:**
+
+```bash
+./scripts/railway-setup.sh
+```
+
+The script will:
+1. Create the Railway project
+2. Provision a PostgreSQL database (with `DATABASE_URL` injected automatically)
+3. Generate a `SESSION_SECRET` and set `NODE_ENV=production`
+4. Prompt for `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `ANTHROPIC_API_KEY`
+5. Generate a Railway domain and set `CLIENT_URL`
+6. Trigger the first deployment
+
+#### Manual setup (alternative)
+
+If you prefer the dashboard:
+
+1. **Create project** — New Project → Deploy from GitHub repo
+2. **Add database** — Add Service → Database → PostgreSQL (injects `DATABASE_URL` automatically)
+3. **Set variables** in the Variables tab:
+
+| Variable | Value |
+|----------|-------|
+| `NODE_ENV` | `production` |
+| `CLIENT_URL` | Your Railway domain, e.g. `https://quizwebapp.up.railway.app` |
+| `GOOGLE_CLIENT_ID` | Your Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Your Google OAuth client secret |
+| `SESSION_SECRET` | 64-char hex string (see generation command above) |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key (for AI quiz generation) |
+
+#### Update Google OAuth credentials
+
+After getting your Railway domain, add it to your [Google Cloud OAuth client](https://console.cloud.google.com/apis/credentials):
+
+- **Authorised JavaScript origins:** `https://your-app.up.railway.app`
+- **Authorised redirect URIs:** `https://your-app.up.railway.app/api/auth/google/callback`
+
+`CLIENT_URL` is used to construct the OAuth callback URI — once it matches your Railway domain the auth flow works without code changes.
+
+#### How the build works
+
+`nixpacks.toml` defines the pipeline Railway runs on every deploy:
+
+1. **Install** — `npm ci` for both `client/` and `server/`
+2. **Build** — Vite builds the React app into `client/dist/`; `tsc` compiles the server; Prisma client is generated
+3. **Start** — `prisma migrate deploy` runs pending migrations, then `npm start` launches Fastify
+
+In production Fastify serves `client/dist/` as static files and falls back to `index.html` for all non-API routes, so React Router's client-side navigation works correctly.
+
 ## Quiz JSON Format
 
 Quizzes are imported/exported as a JSON array of question objects.

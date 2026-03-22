@@ -8,10 +8,14 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   HOST: z.string().default("0.0.0.0"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  CLIENT_URL: z.string().default("http://localhost:5173"),
+  // CLIENT_URL can be omitted on Railway — RAILWAY_PUBLIC_DOMAIN is used as fallback
+  CLIENT_URL: z.string().optional(),
+  RAILWAY_PUBLIC_DOMAIN: z.string().optional(),
 });
 
-export type Env = z.infer<typeof envSchema>;
+export type Env = Omit<z.infer<typeof envSchema>, "CLIENT_URL" | "RAILWAY_PUBLIC_DOMAIN"> & {
+  CLIENT_URL: string;
+};
 
 export function loadConfig(): Env {
   const result = envSchema.safeParse(process.env);
@@ -20,5 +24,13 @@ export function loadConfig(): Env {
     console.error(result.error.flatten().fieldErrors);
     process.exit(1);
   }
-  return result.data;
+
+  const data = result.data;
+
+  // Resolve CLIENT_URL: explicit value wins, then Railway's injected domain, then local default
+  const clientUrl =
+    data.CLIENT_URL ??
+    (data.RAILWAY_PUBLIC_DOMAIN ? `https://${data.RAILWAY_PUBLIC_DOMAIN}` : "http://localhost:5174");
+
+  return { ...data, CLIENT_URL: clientUrl };
 }
