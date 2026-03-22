@@ -146,19 +146,38 @@ The app will be available at `http://localhost:5174`. The Vite dev server proxie
 
 The app deploys as a **single Railway service**. Fastify serves both the API and the built React SPA — no separate frontend service needed.
 
-#### 1. Create the project
+#### Automated setup (recommended)
 
-- New Project → Deploy from GitHub repo → select this repository
-- Railway detects `nixpacks.toml` automatically and runs the full build pipeline
+A setup script handles project creation, PostgreSQL provisioning, environment variables, and the first deploy in one go.
 
-#### 2. Add a PostgreSQL database
+**Prerequisites:**
 
-- In the project dashboard → **Add Service → Database → PostgreSQL**
-- Railway injects `DATABASE_URL` into your service automatically
+```bash
+npm install -g @railway/cli
+railway login
+```
 
-#### 3. Set environment variables
+**Run from the repo root:**
 
-In the service's **Variables** tab, add:
+```bash
+./scripts/railway-setup.sh
+```
+
+The script will:
+1. Create the Railway project
+2. Provision a PostgreSQL database (with `DATABASE_URL` injected automatically)
+3. Generate a `SESSION_SECRET` and set `NODE_ENV=production`
+4. Prompt for `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `ANTHROPIC_API_KEY`
+5. Generate a Railway domain and set `CLIENT_URL`
+6. Trigger the first deployment
+
+#### Manual setup (alternative)
+
+If you prefer the dashboard:
+
+1. **Create project** — New Project → Deploy from GitHub repo
+2. **Add database** — Add Service → Database → PostgreSQL (injects `DATABASE_URL` automatically)
+3. **Set variables** in the Variables tab:
 
 | Variable | Value |
 |----------|-------|
@@ -169,21 +188,14 @@ In the service's **Variables** tab, add:
 | `SESSION_SECRET` | 64-char hex string (see generation command above) |
 | `ANTHROPIC_API_KEY` | Your Anthropic API key (for AI quiz generation) |
 
-`DATABASE_URL` is injected automatically by the PostgreSQL add-on — do not set it manually.
+#### Update Google OAuth credentials
 
-#### 4. Add the production redirect URI in Google Cloud Console
+After getting your Railway domain, add it to your [Google Cloud OAuth client](https://console.cloud.google.com/apis/credentials):
 
-- Go to **APIs & Services → Credentials → your OAuth client**
-- Under **Authorised redirect URIs**, add:
-  ```
-  https://your-railway-domain.up.railway.app/api/auth/google/callback
-  ```
-- Under **Authorised JavaScript origins**, add:
-  ```
-  https://your-railway-domain.up.railway.app
-  ```
+- **Authorised JavaScript origins:** `https://your-app.up.railway.app`
+- **Authorised redirect URIs:** `https://your-app.up.railway.app/api/auth/google/callback`
 
-The `CLIENT_URL` env var is used to construct the OAuth callback URI, so once it matches your Railway domain the auth flow works without any code changes.
+`CLIENT_URL` is used to construct the OAuth callback URI — once it matches your Railway domain the auth flow works without code changes.
 
 #### How the build works
 
