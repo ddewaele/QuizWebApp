@@ -47,7 +47,7 @@ A quiz file is a **JSON object** with a required metadata block and a questions 
 |---|---|---|---|
 | `title` | `string` | Yes | Human-readable title for the quiz. |
 | `subject` | `string` | No | Broad subject area (e.g. `"Cloud Computing"`, `"ISO 27001"`). |
-| `version` | `string` | No | Semantic version string for tracking revisions. |
+| `version` | `string` | **Yes** | Semantic version in `MAJOR.MINOR.PATCH` format (e.g. `"1.0.0"`). Start new files at `"0.0.1"`. |
 | `created` | `string` | No | ISO 8601 date string (`YYYY-MM-DD`). |
 
 ---

@@ -53,10 +53,12 @@ export function QuizUploadPage() {
       <p className="text-gray-600 mb-6">
         Upload a quiz JSON file in the standard format:{" "}
         <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
-          {"{ meta: { title }, questions: [...] }"}
+          {"{ meta: { title, version }, questions: [...] }"}
         </code>
         . The quiz title and subject are read from the file's{" "}
-        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">meta</code> block.
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">meta</code> block.{" "}
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">version</code> is required and must be a semantic version (e.g.{" "}
+        <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">1.0.0</code>).
       </p>
 
       <div className="max-w-xl">
