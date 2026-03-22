@@ -99,7 +99,19 @@ Use `gh pr create` with:
   (2–4 bullet points of what changed), and a `## Test plan` checklist
   noting the E2E tests that cover the feature.
 
-### 5d. Merge the PR
+### 5d. Wait for CI checks to pass
+
+After the PR is created, wait for the required status checks to complete:
+```
+gh pr checks <pr-number> --watch
+```
+
+- If all checks pass: continue to merge.
+- If any check fails: stop, show the failure output, and tell the user to
+  fix the issue and push again before retrying. Do NOT merge a PR with
+  failing checks.
+
+### 5e. Merge the PR
 
 ```
 gh pr merge <pr-number> --squash --delete-branch
@@ -136,6 +148,8 @@ After completing all phases, print a concise summary table:
 | Commit message quality | ✓ / ✗ |
 | GitHub issue created | ✓ #<n> |
 | Branch pushed | ✓ / ✗ |
-| PR created & merged | ✓ #<n> |
+| PR created | ✓ #<n> |
+| CI checks passed | ✓ / ✗ |
+| PR merged | ✓ #<n> |
 | Back on main | ✓ / ✗ |
 | Next feature branch | ✓ feature/<name> / staying on main |

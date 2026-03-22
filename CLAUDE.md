@@ -88,4 +88,4 @@ Vite proxies `/api/*` to `localhost:3000`. Frontend never knows the backend URL.
 
 **After changing Prisma schema:** run `npx prisma generate` and restart the server, or use `/fresh-start`.
 
-**Environment:** copy `.env.example` to `server/.env`. Requires Google OAuth credentials and a 32-byte hex session secret.
+**Environment:** copy `server/.env.example` to `server/.env`. Requires Google OAuth credentials, a 32-byte hex session secret, and an Anthropic API key for AI quiz generation.

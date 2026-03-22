@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { QuestionEditor, type QuestionData } from "./QuestionEditor";
+import { AiGeneratorPanel } from "./AiGeneratorPanel";
 
 interface QuizFormProps {
   initialTitle?: string;
@@ -40,6 +41,7 @@ export function QuizForm({
     initialQuestions ?? [createEmptyQuestion(1)],
   );
   const [errors, setErrors] = useState<string[]>([]);
+  const [mode, setMode] = useState<"manual" | "ai">("manual");
 
   const addQuestion = () => {
     const maxId = Math.max(0, ...questions.map((q) => q.questionId));
@@ -132,26 +134,67 @@ export function QuizForm({
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Questions</h2>
-          <button
-            type="button"
-            onClick={addQuestion}
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-          >
-            + Add Question
-          </button>
-        </div>
+        {/* Mode selector — only shown when creating (no initialQuestions) */}
+        {!initialQuestions && (
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden w-fit">
+            <button
+              type="button"
+              onClick={() => setMode("manual")}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                mode === "manual"
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              Build manually
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("ai")}
+              className={`px-4 py-2 text-sm font-medium transition-colors border-l border-gray-200 ${
+                mode === "ai"
+                  ? "bg-purple-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              ✦ Generate with AI
+            </button>
+          </div>
+        )}
 
-        {questions.map((q, i) => (
-          <QuestionEditor
-            key={q.questionId}
-            index={i}
-            question={q}
-            onChange={(updated) => updateQuestion(i, updated)}
-            onRemove={() => removeQuestion(i)}
+        {mode === "ai" ? (
+          <AiGeneratorPanel
+            title={title}
+            description={description}
+            onGenerated={(generated) => {
+              setQuestions(generated);
+              setMode("manual");
+            }}
           />
-        ))}
+        ) : (
+          <>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Questions</h2>
+              <button
+                type="button"
+                onClick={addQuestion}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                + Add Question
+              </button>
+            </div>
+
+            {questions.map((q, i) => (
+              <QuestionEditor
+                key={q.questionId}
+                index={i}
+                question={q}
+                onChange={(updated) => updateQuestion(i, updated)}
+                onRemove={() => removeQuestion(i)}
+              />
+            ))}
+          </>
+        )}
       </div>
 
       <div className="flex gap-2 pt-4 border-t border-gray-200">
