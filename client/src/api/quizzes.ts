@@ -109,3 +109,20 @@ export function useImportQuiz() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["quizzes"] }),
   });
 }
+
+export interface BatchImportResult {
+  fileName: string;
+  success: boolean;
+  quiz?: { id: string; title: string; _count: { questions: number } };
+  error?: string;
+  details?: { errors?: { path: string; message: string }[] };
+}
+
+export function useImportQuizBatch() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { files: { content: string; fileName: string }[] }) =>
+      api.post<{ results: BatchImportResult[] }>("/quizzes/import/batch", data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["quizzes"] }),
+  });
+}

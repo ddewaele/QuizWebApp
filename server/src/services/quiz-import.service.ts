@@ -2,8 +2,55 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 import { quizFileSchema } from "../../../shared/quiz-file.schema.js";
 import { ValidationError } from "../utils/errors.js";
 
+export interface BatchImportResult {
+  fileName: string;
+  success: boolean;
+  quiz?: { id: string; title: string; _count: { questions: number } };
+  error?: string;
+  details?: unknown;
+}
+
 export class QuizImportService {
   constructor(private prisma: PrismaClient) {}
+
+  async importBatch(
+    userId: string,
+    files: { content: string; fileName: string }[],
+  ): Promise<BatchImportResult[]> {
+    const results: BatchImportResult[] = [];
+
+    for (const file of files) {
+      try {
+        const quiz = await this.importFromJson(userId, file.content);
+        results.push({
+          fileName: file.fileName,
+          success: true,
+          quiz: {
+            id: quiz.id,
+            title: quiz.title,
+            _count: { questions: quiz.questions.length },
+          },
+        });
+      } catch (err) {
+        if (err instanceof ValidationError) {
+          results.push({
+            fileName: file.fileName,
+            success: false,
+            error: err.message,
+            details: err.details,
+          });
+        } else {
+          results.push({
+            fileName: file.fileName,
+            success: false,
+            error: "Unexpected error importing quiz",
+          });
+        }
+      }
+    }
+
+    return results;
+  }
 
   async importFromJson(userId: string, jsonString: string) {
     let parsed: unknown;

@@ -106,6 +106,39 @@ export default async function quizRoutes(fastify: FastifyInstance) {
     reply.raw.end();
   });
 
+  // Batch import quizzes from multiple JSON files
+  fastify.post("/api/quizzes/import/batch", async (request, reply) => {
+    const { files } = request.body as {
+      files?: { content: string; fileName: string }[];
+    };
+
+    if (!files || !Array.isArray(files) || files.length === 0) {
+      return reply.status(400).send({
+        error: "ValidationError",
+        message: "files array is required and must not be empty",
+      });
+    }
+
+    if (files.length > 50) {
+      return reply.status(400).send({
+        error: "ValidationError",
+        message: "Maximum 50 files per batch upload",
+      });
+    }
+
+    for (const file of files) {
+      if (!file.content || !file.fileName) {
+        return reply.status(400).send({
+          error: "ValidationError",
+          message: "Each file must have content and fileName fields",
+        });
+      }
+    }
+
+    const results = await importService.importBatch(request.userId!, files);
+    return reply.status(200).send({ results });
+  });
+
   // Import quiz from JSON
   fastify.post("/api/quizzes/import", async (request, reply) => {
     const { content } = request.body as { content?: string };
