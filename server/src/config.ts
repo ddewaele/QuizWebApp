@@ -11,10 +11,15 @@ const envSchema = z.object({
   // CLIENT_URL can be omitted on Railway — RAILWAY_PUBLIC_DOMAIN is used as fallback
   CLIENT_URL: z.string().optional(),
   RAILWAY_PUBLIC_DOMAIN: z.string().optional(),
+  // Email (optional — sharing works without it)
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().email().optional(),
 });
 
 export type Env = Omit<z.infer<typeof envSchema>, "CLIENT_URL" | "RAILWAY_PUBLIC_DOMAIN"> & {
   CLIENT_URL: string;
+  RESEND_API_KEY?: string;
+  RESEND_FROM_EMAIL?: string;
 };
 
 export function loadConfig(): Env {

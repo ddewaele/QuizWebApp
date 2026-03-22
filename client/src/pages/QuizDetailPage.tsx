@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuiz, useDeleteQuiz } from "../api/quizzes";
 import { ConfirmDialog } from "../components/ui/ConfirmDialog";
+import { ShareDialog } from "../components/quiz/ShareDialog";
 import { useState } from "react";
 
 export function QuizDetailPage() {
@@ -9,6 +10,7 @@ export function QuizDetailPage() {
   const deleteQuiz = useDeleteQuiz();
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   if (isLoading) return <p className="text-gray-500">Loading quiz...</p>;
   if (error)
@@ -61,6 +63,12 @@ export function QuizDetailPage() {
               Edit
             </Link>
             <button
+              onClick={() => setShowShareDialog(true)}
+              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              Share
+            </button>
+            <button
               onClick={handleExport}
               className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
             >
@@ -81,6 +89,10 @@ export function QuizDetailPage() {
           <span>Created {new Date(quiz.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
+
+      {showShareDialog && (
+        <ShareDialog quizId={quiz.id} onClose={() => setShowShareDialog(false)} />
+      )}
 
       {showDeleteConfirm && (
         <ConfirmDialog

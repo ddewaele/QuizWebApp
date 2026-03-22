@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  displayName String?
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   accounts AuthAccount[]
   quizzes  Quiz[]
@@ -50,6 +51,7 @@ model Quiz {
 
   questions QuizQuestion[]
   attempts  QuizAttempt[]
+  shares    QuizShare[]
 
   @@index([userId])
 }
@@ -109,4 +111,33 @@ model QuizAttemptAnswer {
 
   @@unique([attemptId, questionId])
   @@index([attemptId])
+}
+
+model QuizShare {
+  id          String          @id @default(cuid())
+  quizId      String
+  quiz        Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  email       String
+  accessLevel QuizAccessLevel @default(TAKER)
+  status      ShareStatus     @default(PENDING)
+  token       String          @unique @default(cuid())
+  sharedBy    String
+  sharedAt    DateTime        @default(now())
+  acceptedAt  DateTime?
+
+  @@unique([quizId, email])
+  @@index([quizId])
+  @@index([email])
+  @@index([token])
+}
+
+enum QuizAccessLevel {
+  TAKER
+  VIEWER
+}
+
+enum ShareStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
 }

@@ -7,6 +7,7 @@ import authPlugin from "./plugins/auth.js";
 import authRoutes from "./routes/auth.js";
 import quizRoutes from "./routes/quizzes.js";
 import attemptRoutes from "./routes/attempts.js";
+import sharingRoutes from "./routes/sharing.js";
 import { AppError } from "./utils/errors.js";
 import type { Env } from "./config.js";
 
@@ -33,6 +34,7 @@ export async function buildApp(config: Env) {
   await fastify.register(authRoutes, { config });
   await fastify.register(quizRoutes);
   await fastify.register(attemptRoutes);
+  await fastify.register(sharingRoutes, { config });
 
   // Global error handler
   fastify.setErrorHandler((error: FastifyError & { details?: unknown }, _request, reply) => {
