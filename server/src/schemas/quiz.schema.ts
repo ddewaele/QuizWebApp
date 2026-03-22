@@ -16,6 +16,19 @@ const questionInputSchema = z.object({
   correctAnswer: z.array(z.string()).min(1),
 });
 
+export const suggestChipsSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+});
+
+export const generateQuizSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+  prompt: z.string().min(5, "Please describe what kind of quiz you want"),
+});
+
+export type GenerateQuizInput = z.infer<typeof generateQuizSchema>;
+
 export const createQuizSchema = z.object({
   title: z.string().min(1).max(255),
   description: z.string().max(2000).optional(),

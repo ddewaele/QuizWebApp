@@ -46,6 +46,61 @@ export function useDeleteQuiz() {
   });
 }
 
+export function useSuggestChips() {
+  return useMutation({
+    mutationFn: (data: { title: string; description?: string }) =>
+      api.post<{ chips: string[] }>("/quizzes/suggest-chips", data),
+  });
+}
+
+export async function streamGenerateQuiz(
+  data: { title: string; description?: string; prompt: string },
+  onStatus: (message: string) => void,
+  onDone: (questions: unknown[]) => void,
+  onError: (message: string) => void,
+) {
+  const response = await fetch("/api/quizzes/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok || !response.body) {
+    onError("Failed to connect to the generation service.");
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      try {
+        const event = JSON.parse(line.slice(6)) as {
+          type: "status" | "done" | "error";
+          message?: string;
+          questions?: unknown[];
+        };
+        if (event.type === "status" && event.message) onStatus(event.message);
+        else if (event.type === "done" && event.questions) onDone(event.questions);
+        else if (event.type === "error" && event.message) onError(event.message);
+      } catch {
+        // malformed event — skip
+      }
+    }
+  }
+}
+
 export function useImportQuiz() {
   const queryClient = useQueryClient();
   return useMutation({
