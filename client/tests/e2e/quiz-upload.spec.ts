@@ -5,6 +5,7 @@ import os from "os";
 import { mockAuthenticatedUser } from "./helpers/auth";
 
 const QUIZ_ID = "quiz-upload-456";
+const QUIZ_ID_2 = "quiz-upload-789";
 const ATTEMPT_ID = "attempt-upload-789";
 const Q1_ID = "uq1-id";
 const Q2_ID = "uq2-id";
@@ -46,10 +47,10 @@ const UPLOADED_QUIZ = {
 };
 
 /** Create a temporary JSON quiz file on disk for the upload test (new format). */
-function createTempQuizFile(): string {
+function createTempQuizFile(name = "test-quiz.json", title = "My Uploaded Quiz"): string {
   const content = JSON.stringify({
     meta: {
-      title: "My Uploaded Quiz",
+      title,
       subject: "Geography",
       version: "1.0.0",
     },
@@ -75,7 +76,7 @@ function createTempQuizFile(): string {
     ],
   });
 
-  const tmpPath = path.join(os.tmpdir(), "test-quiz.json");
+  const tmpPath = path.join(os.tmpdir(), name);
   fs.writeFileSync(tmpPath, content, "utf-8");
   return tmpPath;
 }
@@ -90,11 +91,19 @@ test.describe("Upload quiz via JSON", () => {
   test.beforeEach(async ({ page }) => {
     await mockAuthenticatedUser(page);
 
-    await page.route("**/api/quizzes/import", (route) =>
+    await page.route("**/api/quizzes/import/batch", (route) =>
       route.fulfill({
-        status: 201,
+        status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ quiz: UPLOADED_QUIZ }),
+        body: JSON.stringify({
+          results: [
+            {
+              fileName: "test-quiz.json",
+              success: true,
+              quiz: { id: QUIZ_ID, title: "My Uploaded Quiz", _count: { questions: 2 } },
+            },
+          ],
+        }),
       }),
     );
 
@@ -107,28 +116,67 @@ test.describe("Upload quiz via JSON", () => {
     );
   });
 
-  test("user uploads a JSON file and sees the quiz detail page", async ({ page }) => {
+  test("user uploads a JSON file and sees success results", async ({ page }) => {
     await page.goto("/quizzes/upload");
 
-    await expect(page.getByRole("heading", { name: "Upload Quiz" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Upload Quizzes" })).toBeVisible();
 
-    // Upload the file — title now comes from meta.title in the JSON
+    // Upload the file
     await page.locator('input[type="file"]').setInputFiles(tmpQuizFile);
 
-    // File should be accepted and meta preview shown
-    await expect(page.getByText("Valid JSON file")).toBeVisible();
+    // File should appear in list with meta preview
     await expect(page.getByText("My Uploaded Quiz")).toBeVisible();
     await expect(page.getByText("Geography")).toBeVisible();
 
     // Submit
-    await page.getByRole("button", { name: "Upload Quiz" }).click();
+    await page.getByRole("button", { name: /Upload 1 Quiz/ }).click();
 
-    // Should land on the quiz detail page
-    await expect(page).toHaveURL(`/quizzes/${QUIZ_ID}`);
-    await expect(
-      page.getByRole("heading", { name: "My Uploaded Quiz" }),
-    ).toBeVisible();
+    // Should show success results
+    await expect(page.getByText("uploaded successfully")).toBeVisible();
     await expect(page.getByText("2 questions")).toBeVisible();
+    await expect(page.getByText("View quiz")).toBeVisible();
+  });
+
+  test("user uploads multiple JSON files at once", async ({ page }) => {
+    const tmpFile1 = createTempQuizFile("quiz-1.json", "Geography Quiz");
+    const tmpFile2 = createTempQuizFile("quiz-2.json", "Science Quiz");
+
+    await page.route("**/api/quizzes/import/batch", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          results: [
+            {
+              fileName: "quiz-1.json",
+              success: true,
+              quiz: { id: QUIZ_ID, title: "Geography Quiz", _count: { questions: 2 } },
+            },
+            {
+              fileName: "quiz-2.json",
+              success: true,
+              quiz: { id: QUIZ_ID_2, title: "Science Quiz", _count: { questions: 2 } },
+            },
+          ],
+        }),
+      }),
+    );
+
+    await page.goto("/quizzes/upload");
+
+    // Upload multiple files
+    await page.locator('input[type="file"]').setInputFiles([tmpFile1, tmpFile2]);
+
+    // Both files should appear
+    await expect(page.getByText("2 files selected")).toBeVisible();
+
+    // Submit
+    await page.getByRole("button", { name: /Upload 2 Quizzes/ }).click();
+
+    // Should show success for both
+    await expect(page.getByText("All 2 quizzes uploaded successfully!")).toBeVisible();
+    await expect(page.getByText("Geography Quiz")).toBeVisible();
+    await expect(page.getByText("Science Quiz")).toBeVisible();
   });
 });
 
