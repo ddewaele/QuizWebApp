@@ -1,11 +1,19 @@
 ---
 name: fresh-start
-description: Kill all QuizWebApp dev processes and restart backend + frontend from scratch
+description: Kill all dev processes and restart backend + frontend from scratch
 disable-model-invocation: true
 allowed-tools: Bash
 ---
 
-Perform a clean restart of the entire QuizWebApp development environment.
+Perform a clean restart of the entire development environment.
+
+## Configuration (adjust per project)
+- Backend port: 3000
+- Frontend port: 5174
+- Backend start command: `npx tsx watch src/index.ts` (run from `server/`)
+- Frontend start command: `node node_modules/.bin/vite --port 5174` (run from `client/`)
+- Health check URL: `http://localhost:3000/api/health`
+- ORM codegen: `npx prisma generate` (remove this step if not using Prisma)
 
 ## Steps
 
@@ -21,7 +29,7 @@ Use `lsof -ti :<port> | xargs kill` for each port. Don't fail if nothing is runn
 
 Check that the PostgreSQL container is healthy:
 ```
-docker compose -f /Users/davydewaele/Projects/Personal/QuizWebApp/docker-compose.yml ps
+docker compose -f docker-compose.yml ps
 ```
 If it's not running, start it with `docker compose up -d` and wait for it to be healthy.
 

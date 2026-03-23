@@ -37,6 +37,7 @@ docker compose down      # Stop PostgreSQL
 - `/fresh-start` — Kill all dev processes, regenerate Prisma client, restart backend + frontend, verify health
 - `/start-new-feature` — Pull latest main, create a feature branch, commit everything, run E2E tests, push branch
 - `/push-new-feature` — Verify feature branch is clean and tested, create GitHub issue + PR, wait for CI (no auto-merge)
+- `/shutdown` — Stop frontend, backend, and Docker Compose services
 
 ## Git workflow
 
