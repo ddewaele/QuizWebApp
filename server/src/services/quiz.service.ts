@@ -16,7 +16,15 @@ export class QuizService {
   async listByUser(userId: string) {
     return this.prisma.quiz.findMany({
       where: { userId },
-      include: { _count: { select: { questions: true, attempts: true } } },
+      include: {
+        _count: { select: { questions: true, attempts: true } },
+        attempts: {
+          where: { userId },
+          orderBy: { completedAt: "desc" },
+          take: 8,
+          select: { percentage: true, completedAt: true },
+        },
+      },
       orderBy: { updatedAt: "desc" },
     });
   }

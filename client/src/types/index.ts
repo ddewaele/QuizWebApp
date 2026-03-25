@@ -22,6 +22,11 @@ export interface QuizQuestion {
   sortOrder: number;
 }
 
+export interface QuizAttemptSummary {
+  percentage: number;
+  completedAt: string;
+}
+
 export interface Quiz {
   id: string;
   title: string;
@@ -30,6 +35,7 @@ export interface Quiz {
   createdAt: string;
   updatedAt: string;
   questions: QuizQuestion[];
+  attempts?: QuizAttemptSummary[];
   _count?: {
     questions: number;
     attempts: number;

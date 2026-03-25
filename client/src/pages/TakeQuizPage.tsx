@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuiz } from "../api/quizzes";
 import { useSubmitAttempt } from "../api/attempts";
 import { QuizPlayer } from "../components/quiz/QuizPlayer";
+import { ApiError } from "../api/client";
 
 export function TakeQuizPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,11 +21,12 @@ export function TakeQuizPage() {
 
   const quiz = data.quiz;
 
-  const handleSubmit = (answers: Record<string, string[]>) => {
+  const handleSubmit = (answers: Record<string, string[]>, onError: () => void) => {
     submitAttempt.mutate(
       { quizId: quiz.id, answers },
       {
         onSuccess: (data) => navigate(`/results/${data.attempt.id}`),
+        onError,
       },
     );
   };
@@ -46,8 +48,25 @@ export function TakeQuizPage() {
       )}
 
       {submitAttempt.error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {submitAttempt.error.message || "Failed to submit quiz"}
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-medium">
+              {submitAttempt.error instanceof ApiError && submitAttempt.error.status === 401
+                ? "Your session expired — please sign in again and retry."
+                : submitAttempt.error.message || "Failed to submit quiz. Please try again."}
+            </p>
+            {submitAttempt.error instanceof ApiError && submitAttempt.error.status === 401 && (
+              <a href="/api/auth/google" className="inline-block mt-2 text-blue-600 hover:underline font-medium">
+                Sign in again →
+              </a>
+            )}
+          </div>
+          <button
+            onClick={() => submitAttempt.reset()}
+            className="text-red-400 hover:text-red-600 flex-shrink-0 text-lg leading-none"
+          >
+            ×
+          </button>
         </div>
       )}
 

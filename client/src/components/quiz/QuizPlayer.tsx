@@ -1,10 +1,11 @@
 import { useState } from "react";
 import type { QuizQuestion } from "../../types";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface QuizPlayerProps {
   questions: QuizQuestion[];
-  onSubmit: (answers: Record<string, string[]>) => void;
+  onSubmit: (answers: Record<string, string[]>, onError: () => void) => void;
   isSubmitting: boolean;
 }
 
@@ -86,7 +87,7 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
 
   const handleSubmit = () => {
     if (!allAnswered) return;
-    onSubmit(answers);
+    onSubmit(answers, () => setShowConfirm(false));
   };
 
   const getOptionStyle = (key: string, isTrue: boolean) => {
@@ -127,9 +128,27 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
       {/* Question */}
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
         <div className="flex items-start gap-3 mb-4">
-          <span className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-bold">
-            {currentIndex + 1}
-          </span>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <button
+              type="button"
+              onClick={goPrev}
+              disabled={currentIndex === 0}
+              className="p-1 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-bold">
+              {currentIndex + 1}
+            </span>
+            <button
+              type="button"
+              onClick={goNext}
+              disabled={currentIndex === questions.length - 1}
+              className="p-1 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
           <div>
             <p className="text-lg font-medium text-gray-900">
               {question.questionText}
