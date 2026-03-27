@@ -27,11 +27,27 @@ Use `lsof -ti :<port> | xargs kill` for each port. Don't fail if nothing is runn
 
 ### 2. Verify Docker PostgreSQL is running
 
-Check that the PostgreSQL container is healthy:
+First check that the Docker daemon itself is reachable:
 ```
-docker compose -f docker-compose.yml ps
+docker info
 ```
-If it's not running, start it with `docker compose up -d` and wait for it to be healthy.
+If this fails (exit code non-zero), **stop immediately** and tell the user:
+> "Docker daemon is not running. Please start Docker Desktop first, wait ~20 seconds for it to initialize, then run /fresh-start again."
+Do NOT proceed with the remaining steps.
+
+If Docker is running, check the container status:
+```
+docker compose ps
+```
+If the PostgreSQL container is not running or unhealthy, start it:
+```
+docker compose up -d
+```
+Then wait up to 15 seconds for it to become healthy by polling:
+```
+docker compose ps
+```
+If after 15 seconds it's still not healthy, report "Database: FAILED" and stop — do not start the backend or frontend, as they will fail without a database.
 
 ### 3. Regenerate Prisma client
 
