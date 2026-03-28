@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { QuizQuestion } from "../../types";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { QuestionChat } from "./QuestionChat";
 
 interface QuizPlayerProps {
   questions: QuizQuestion[];
@@ -15,6 +16,7 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
   const [showConfirm, setShowConfirm] = useState(false);
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
   const [hintedQuestions, setHintedQuestions] = useState<Set<string>>(new Set());
+  const [chatOpen, setChatOpen] = useState(false);
 
   const question = questions[currentIndex];
   const selectedKeys = answers[question.id] ?? [];
@@ -245,6 +247,18 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
           >
             {isHinted ? "Hide Hints" : "Show Hints"}
           </button>
+          <button
+            type="button"
+            onClick={() => setChatOpen(true)}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors flex items-center gap-1.5 ${
+              chatOpen
+                ? "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700"
+                : "bg-white text-indigo-600 border-indigo-300 hover:bg-indigo-50"
+            }`}
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            Ask AI
+          </button>
         </div>
       </div>
 
@@ -320,6 +334,13 @@ export function QuizPlayer({ questions, onSubmit, isSubmitting }: QuizPlayerProp
           isPending={isSubmitting}
           onConfirm={handleSubmit}
           onCancel={() => setShowConfirm(false)}
+        />
+      )}
+
+      {chatOpen && (
+        <QuestionChat
+          question={question}
+          onClose={() => setChatOpen(false)}
         />
       )}
     </div>
